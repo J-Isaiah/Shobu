@@ -1,0 +1,49 @@
+[1mdiff --git a/backend/.gitignore b/backend/.gitignore[m
+[1mindex 667aaef..710e25c 100644[m
+[1m--- a/backend/.gitignore[m
+[1m+++ b/backend/.gitignore[m
+[36m@@ -31,3 +31,14 @@[m [mbuild/[m
+ [m
+ ### VS Code ###[m
+ .vscode/[m
+[32m+[m
+[32m+[m[32m# Maven[m
+[32m+[m[32m/backend/target/[m
+[32m+[m
+[32m+[m[32m# Node[m
+[32m+[m[32m/frontend/node_modules/[m
+[32m+[m
+[32m+[m[32m# OS / IDE[m
+[32m+[m[32m.DS_Store[m
+[32m+[m[32m.idea/[m
+[32m+[m[32m.vscode/[m
+[1mdiff --git a/backend/src/main/java/com/shobu/ShobuApplication.java b/backend/src/main/java/com/shobu/ShobuApplication.java[m
+[1mindex 5bb19b1..1d8507a 100644[m
+[1m--- a/backend/src/main/java/com/shobu/ShobuApplication.java[m
+[1m+++ b/backend/src/main/java/com/shobu/ShobuApplication.java[m
+[36m@@ -4,10 +4,10 @@[m [mimport org.springframework.boot.SpringApplication;[m
+ import org.springframework.boot.autoconfigure.SpringBootApplication;[m
+ [m
+ @SpringBootApplication[m
+[31m-public class BackendApplication {[m
+[32m+[m[32mpublic class ShobuApplication {[m
+ [m
+ 	public static void main(String[] args) {[m
+[31m-		SpringApplication.run(BackendApplication.class, args);[m
+[32m+[m		[32mSpringApplication.run(ShobuApplication.class, args);[m
+ 	}[m
+ [m
+ }[m
+[1mdiff --git a/backend/src/test/java/com/shobu/ShobuApplicationTests.java b/backend/src/test/java/com/shobu/ShobuApplicationTests.java[m
+[1mindex c30b86b..5f8d670 100644[m
+[1m--- a/backend/src/test/java/com/shobu/ShobuApplicationTests.java[m
+[1m+++ b/backend/src/test/java/com/shobu/ShobuApplicationTests.java[m
+[36m@@ -4,7 +4,7 @@[m [mimport org.junit.jupiter.api.Test;[m
+ import org.springframework.boot.test.context.SpringBootTest;[m
+ [m
+ @SpringBootTest[m
+[31m-class BackendApplicationTests {[m
+[32m+[m[32mclass ShobuApplicationTests {[m
+ [m
+ 	@Test[m
+ 	void contextLoads() {[m
