@@ -33,4 +33,12 @@ public final class Position {
         return Objects.hash(row, col);
     }
 
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
 }
