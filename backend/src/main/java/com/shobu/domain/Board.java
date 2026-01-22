@@ -20,18 +20,21 @@ public class Board {
                 throw new IllegalArgumentException("Grid must have a cols lengh of 4");
             }
         }
-        Stone[][] copy = new Stone[4][4];
 
-        for (int i = 0; i < 4; i++) {
-            copy[i] = grid[i].clone();
-        }
-
-        this.grid = copy;
+        this.grid = copyGrid(grid);
 
     }
 
-    public Board() {
-        this.grid = new Stone[4][4];
+    private static Stone[][] copyGrid(Stone[][] source) {
+        Stone[][] copy = new Stone[4][4];
+        for (int i = 0; i < 4; i++) {
+            copy[i] = source[i].clone();
+        }
+        return copy;
+    }
+
+    public static Board empty() {
+        return new Board(new Stone[4][4]);
     }
 
     public Stone getStoneAt(Position position) {
@@ -47,9 +50,17 @@ public class Board {
     public Board applyMove(Position from, Position to) {
         if (from == null || to == null) {
             throw new IllegalArgumentException("From or To cannot be null when applying a new move");
-
+        }
+        Stone stone = this.grid[from.getRow()][from.getCol()];
+        if (stone == null) {
+            throw new IllegalArgumentException("From position must contain a stone");
         }
 
-    }
+        Stone[][] next = copyGrid(grid);
+        next[to.getRow()][to.getCol()] = stone;
+        next[from.getRow()][from.getCol()] = null;
 
+        return new Board(next);
+
+    }
 }
