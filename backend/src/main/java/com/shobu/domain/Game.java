@@ -9,33 +9,33 @@ public class Game {
     private Board whiteLight;
     private Board whiteDark;
 
-    public Game(Board board, Stone sideToMove) {
-        this.board = board;
+    public Game(Stone sideToMove) {
         this.sideToMove = sideToMove;
     }
 
     public static Game start() {
 
-        return new Game(Board.empty(), Stone.WHITE);
+        return new Game(Stone.WHITE);
     }
 
     // TODO: Configure initial board setup and starting side
     public Boolean init() {
+        this.blackLight = Board.inital();
+        this.blackDark = Board.inital();
+
+        this.whiteLight = Board.inital();
+        this.whiteDark = Board.inital();
+
+        return true;
 
     }
-
-    private Board initBoard(BoardType Color,Stone PlayerSide,){
-        int SIZE = 4;
-        Stone[][] 
-        for (int r = 0; r < SIZE; r++){
-            for (int c = 0; c < SIZE; c++){}
-
-        }
-    }
-
 
     // TODO: Validate move direction and distance
     // TODO: Implement stone push mechanic
     // TODO: Detect win conditions
+    public Stone checkWin(Board board) {
+        for 
+
+    }
 
 }

@@ -33,8 +33,18 @@ public class Board {
         return copy;
     }
 
-    public static Board empty() {
-        return new Board(new Stone[4][4]);
+    public static Board inital() {
+
+        Stone[][] board = new Stone[4][4];
+
+        for (int c = 0; c < 4; c++) {
+            board[0][c] = Stone.WHITE;
+            board[3][c] = Stone.BLACK;
+
+        }
+
+        return new Board(board);
+
     }
 
     public Stone getStoneAt(Position position) {
@@ -62,5 +72,19 @@ public class Board {
 
         return new Board(next);
 
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                Stone s = grid[r][c];
+                sb.append(s == null ? "." : s.name().charAt(0));
+                sb.append(" ");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }
