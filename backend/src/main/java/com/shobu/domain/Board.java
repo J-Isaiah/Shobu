@@ -57,9 +57,13 @@ public class Board {
 
     }
 
-    public Board applyMove(Position from, Position to) {
-        if (from == null || to == null) {
-            throw new IllegalArgumentException("From or To cannot be null when applying a new move");
+    public Board applyMove(Position from, Direction direction, int distance) {
+
+        if (from == null || direction == null) {
+            throw new IllegalArgumentException("From Position Direction Or distance cannot be null");
+        }
+        if (distance <= 0) {
+            throw new IllegalArgumentException("Distance Cannot be less then or equal to one");
         }
         Stone stone = this.grid[from.getRow()][from.getCol()];
         if (stone == null) {
@@ -67,7 +71,7 @@ public class Board {
         }
 
         Stone[][] next = copyGrid(grid);
-        next[to.getRow()][to.getCol()] = stone;
+        next[from.getRow() + direction.dx * distance][from.getCol() + direction.dy * distance] = stone;
         next[from.getRow()][from.getCol()] = null;
 
         return new Board(next);
