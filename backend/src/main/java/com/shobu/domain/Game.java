@@ -53,10 +53,10 @@ public class Game {
         if (curStone != this.sideToMove) {
             throw new InvalidMoveException("Not Your Turn");
         }
-
-        if (from.getRow() + direction.dx > 3 || from.getCol() + direction.dy > 3) {
+        int newRow = from.getRow() + direction.dx * distance;
+        int newCol = from.getCol() + direction.dy * distance;
+        if (newRow >= 4 || newRow < 0 || newCol >= 4 || newCol < 0) {
             throw new PieceOutOfBoundsException("Current move set moves piece out side of playable area");
-
         }
 
     }
