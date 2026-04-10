@@ -1,5 +1,7 @@
 package com.shobu.domain;
 
+import com.shobu.domain.errors.*;;
+
 public class Board {
 
     private final Stone[][] grid;
@@ -62,12 +64,33 @@ public class Board {
         if (from == null || direction == null) {
             throw new IllegalArgumentException("From Position Direction Or distance cannot be null");
         }
-        if (distance <= 0) {
+        if (distance <= 0 || distance > 2) {
             throw new IllegalArgumentException("Distance Cannot be less then or equal to one");
         }
+
+        int newRow = from.getRow() + direction.dx * distance;
+        int newCol = from.getCol() + direction.dy * distance;
+
+        if (newRow >= 4 || newRow < 0 || newCol >= 4 || newCol < 0) {
+            throw new PieceOutOfBoundsException("Current move set moves piece out side of playable area");
+        }
+
         Stone stone = this.grid[from.getRow()][from.getCol()];
         if (stone == null) {
             throw new IllegalArgumentException("From position must contain a stone");
+        }
+
+        Stone oppStoneColor = (stone == Stone.BLACK) ? Stone.WHITE : Stone.BLACK;
+
+        // Push Check one space
+        int step1Row = from.getRow() + direction.dx;
+        int step1Col = from.getCol() + direction.dy;
+
+        int step2Row = from.getRow() + direction.dx * 2;
+        int step2Col = from.getCol() + direction.dy * 2;
+
+        if (this.grid[step1Row][step1Col] != null || this.grid[step2Row][step2Col] != null) {
+            this.pushStone(from, direction, distance, stone, oppStoneColor);
         }
 
         Stone[][] next = copyGrid(grid);
@@ -76,6 +99,21 @@ public class Board {
 
         return new Board(next);
 
+    }
+
+    private Board pushStone(Position from, Direction direction, int distance, Stone curStone,
+            // TODO Push Stone detection and error handling
+            // TODO: Push stone for distance 1
+            // TODO Push Stone FOr Distance 2
+            Stone oppStoneColor) {
+        if (this.grid[newRow][newCol] == curStone) {
+            throw new CannotPushOwnPieceException(
+                    String.format(
+                            "Your Piece: %s attempted to push same color piece, you must move the opposite piece: %s",
+                            curStone,
+                            oppStoneColor));
+
+        }
     }
 
     @Override

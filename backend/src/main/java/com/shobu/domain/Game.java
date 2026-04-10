@@ -44,7 +44,8 @@ public class Game {
             throw new IllegalArgumentException("From and Direction Cannot Be Null");
         }
 
-        if (distance > 2 || distance < 0) {
+        if (distance <= 0 || distance > 2) {
+
             throw new IllegalArgumentException("Distance must be 2 or below and more then 0");
         }
 
@@ -52,11 +53,6 @@ public class Game {
 
         if (curStone != this.sideToMove) {
             throw new InvalidMoveException("Not Your Turn");
-        }
-        int newRow = from.getRow() + direction.dx * distance;
-        int newCol = from.getCol() + direction.dy * distance;
-        if (newRow >= 4 || newRow < 0 || newCol >= 4 || newCol < 0) {
-            throw new PieceOutOfBoundsException("Current move set moves piece out side of playable area");
         }
 
     }
