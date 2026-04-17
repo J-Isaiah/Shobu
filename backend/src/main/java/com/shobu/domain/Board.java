@@ -1,6 +1,8 @@
 package com.shobu.domain;
 
-import com.shobu.domain.errors.*;;
+import com.shobu.domain.errors.InvalidMoveException;
+import com.shobu.domain.errors.PieceOutOfBoundsException;
+;
 
 public class Board {
 
@@ -59,7 +61,7 @@ public class Board {
 
     }
 
-    public Board applyMove(Position from, Direction direction, int distance) {
+    public Board applyMove(Position from, Direction direction, int distance, Stone sideToMove) {
 
         if (from == null || direction == null) {
             throw new IllegalArgumentException("From Position Direction Or distance cannot be null");
@@ -80,18 +82,24 @@ public class Board {
             throw new IllegalArgumentException("From position must contain a stone");
         }
 
+        if (stone != sideToMove){
+            throw new InvalidMoveException("You cannot select an opponants stone to move");
+        }
+        // Check Immidate Stone Path
+        int check1Row = from.getRow() + direction.dx;
+        int check1Col = from.getCol() +direction.dy;
+        int check2Row = from.getRow() + direction.dx;
+        int check2Col = from.getCol() +direction.dy;
+
         Stone oppStoneColor = (stone == Stone.BLACK) ? Stone.WHITE : Stone.BLACK;
 
-        // Push Check one space
-        int step1Row = from.getRow() + direction.dx;
-        int step1Col = from.getCol() + direction.dy;
-
-        int step2Row = from.getRow() + direction.dx * 2;
-        int step2Col = from.getCol() + direction.dy * 2;
-
-        if (this.grid[step1Row][step1Col] != null || this.grid[step2Row][step2Col] != null) {
-            this.pushStone(from, direction, distance, stone, oppStoneColor);
+        if (distance == 1 && this.grid[check1Row][check1Col] != null){
+            // Needs Push
         }
+        // Check 2 Stone Path
+        else if (distance == 2 && this.grid[check2Row][check2Col] != null){
+        }
+
 
         Stone[][] next = copyGrid(grid);
         next[from.getRow() + direction.dx * distance][from.getCol() + direction.dy * distance] = stone;
@@ -101,20 +109,31 @@ public class Board {
 
     }
 
-    private Board pushStone(Position from, Direction direction, int distance, Stone curStone,
-            // TODO Push Stone detection and error handling
-            // TODO: Push stone for distance 1
-            // TODO Push Stone FOr Distance 2
-            Stone oppStoneColor) {
-        if (this.grid[newRow][newCol] == curStone) {
-            throw new CannotPushOwnPieceException(
-                    String.format(
-                            "Your Piece: %s attempted to push same color piece, you must move the opposite piece: %s",
-                            curStone,
-                            oppStoneColor));
+    private Board move1Rock(Position from, Direction direction, int distance, Stone stoneToMove, Stone sideToMove){
+        int check1Row = from.getRow() + direction.dx;
+        int check1Col = from.getCol() +direction.dy;
+        int check2Row = from.getRow() + direction.dx;
+        int check2Col = from.getCol() +direction.dy;
 
+        if (stoneToMove == sideToMove){
+            thow new InvalidMoveException
         }
+
+
+
+        
+
+
+
+        // TODO: Check if rock is yours
+        if (){}
+        // TODO: Check if blocking back rock
+        // Check if move off board
+
+        
+
     }
+
 
     @Override
     public String toString() {

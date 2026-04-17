@@ -1,7 +1,6 @@
 package com.shobu.domain;
 
 import com.shobu.domain.errors.InvalidMoveException;
-import com.shobu.domain.errors.PieceOutOfBoundsException;
 
 public class Game {
     private Board curboard;
@@ -35,7 +34,7 @@ public class Game {
 
     public void makeMove(Position from, Direction direction, int distance) {
         validateBasicMove(from, direction, distance);
-        this.curboard = this.curboard.applyMove(from, direction, distance);
+        this.curboard = this.curboard.applyMove(from, direction, distance, sideToMove);
     }
 
     // TODO: Validate move direction and distance
@@ -57,7 +56,6 @@ public class Game {
 
     }
 
-    // TODO: Implement stone push mechanic
 
     public Stone checkBoardWin(Board board) {
         int white = 0;
