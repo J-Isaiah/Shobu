@@ -1,8 +1,8 @@
 package com.shobu.domain;
 
+import com.shobu.domain.errors.CannotPushOwnPieceException;
 import com.shobu.domain.errors.InvalidMoveException;
 import com.shobu.domain.errors.PieceOutOfBoundsException;
-;
 
 public class Board {
 
@@ -82,24 +82,31 @@ public class Board {
             throw new IllegalArgumentException("From position must contain a stone");
         }
 
-        if (stone != sideToMove){
+        if (stone != sideToMove) {
             throw new InvalidMoveException("You cannot select an opponants stone to move");
         }
         // Check Immidate Stone Path
         int check1Row = from.getRow() + direction.dx;
-        int check1Col = from.getCol() +direction.dy;
+        int check1Col = from.getCol() + direction.dy;
         int check2Row = from.getRow() + direction.dx;
-        int check2Col = from.getCol() +direction.dy;
+        int check2Col = from.getCol() + direction.dy;
 
         Stone oppStoneColor = (stone == Stone.BLACK) ? Stone.WHITE : Stone.BLACK;
 
-        if (distance == 1 && this.grid[check1Row][check1Col] != null){
-            // Needs Push
-        }
-        // Check 2 Stone Path
-        else if (distance == 2 && this.grid[check2Row][check2Col] != null){
+        if (!isInBounds(check1Row, check1Col, this.grid)) {
+            throw new InvalidMoveException("Cannot Commit suiside");
         }
 
+        if (distance == 1 && this.grid[check1Row][check1Col] != null) {
+
+            return move1Rock(from, direction, distance, sideToMove, this.grid);
+        } else if (distance == 2 && isInBounds(check2Row, check2Col, grid)) {
+            if ((this.grid[check1Row][check1Col] != null || this.grid[check2Row][check2Col] != null)) {
+                // Push Stone 2 Spaces
+            }
+        } else if (distance == 2 && !isInBounds(check2Col, check2Row, this.grid)) {
+            throw new InvalidMoveException("Cannot Kill Your self");
+        }
 
         Stone[][] next = copyGrid(grid);
         next[from.getRow() + direction.dx * distance][from.getCol() + direction.dy * distance] = stone;
@@ -109,31 +116,41 @@ public class Board {
 
     }
 
-    private Board move1Rock(Position from, Direction direction, int distance, Stone stoneToMove, Stone sideToMove){
-        int check1Row = from.getRow() + direction.dx;
-        int check1Col = from.getCol() +direction.dy;
-        int check2Row = from.getRow() + direction.dx;
-        int check2Col = from.getCol() +direction.dy;
+    private Board move1Rock(Position from, Direction direction, int distance, Stone sideToMove, Stone[][] grid) {
+        Stone stoneToMove = grid[from.getRow()][from.getCol()];
+        int check1Row = from.getRow() + direction.dx; // Space for cur stone
+        int check1Col = from.getCol() + direction.dy;
+        int check2Row = from.getRow() + direction.dx * 2;// Space for pushed rock
+        int check2Col = from.getCol() + direction.dy * 2;
 
-        if (stoneToMove == sideToMove){
-            thow new InvalidMoveException
+        if (stoneToMove != sideToMove) {
+            throw new CannotPushOwnPieceException("Cannot Push Your OWn Stone");
         }
 
+        // Check if stone that needs to be pushed is blocked
+        if (isInBounds(check2Row, check2Col, grid) && grid[check2Row][check2Col] != null) {
+            throw new InvalidMoveException("Stone Blocked cannot push");
+        }
+        Stone[][] next = copyGrid(grid);
+        Stone rockToMove = next[check1Row][check1Col]; // Get Rock color to
 
+        // Normal Push
+        if (isInBounds(check2Row, check2Col, grid)) {
+            // Move Opp Stone Out Of the way
+            next[check1Row][check1Col] = null;
+            next[check2Row][check2Col] = rockToMove;
 
-        
+            // Set prev stone position to null
 
+        } else {
+            next[check1Row][check1Col] = null;
+        }
+        next[from.getRow() + direction.dx * distance][from.getCol() + direction.dy * distance] = stoneToMove;
+        next[from.getRow()][from.getCol()] = null;
 
-
-        // TODO: Check if rock is yours
-        if (){}
-        // TODO: Check if blocking back rock
-        // Check if move off board
-
-        
+        return new Board(next);
 
     }
-
 
     @Override
     public String toString() {
@@ -147,5 +164,10 @@ public class Board {
             sb.append("\n");
         }
         return sb.toString();
+    }
+
+    private boolean isInBounds(int row, int col, Stone[][] grid) {
+        return row >= 0 && row < grid.length &&
+                col >= 0 && col < grid[0].length;
     }
 }

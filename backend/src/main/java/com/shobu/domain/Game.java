@@ -32,10 +32,10 @@ public class Game {
 
     }
 
-    public void makeMove(Position from, Direction direction, int distance) {
-        validateBasicMove(from, direction, distance);
-        this.curboard = this.curboard.applyMove(from, direction, distance, sideToMove);
-    }
+    // public void makeMove(Position from, Direction direction, int distance) {
+    // validateBasicMove(from, direction, distance);
+    // this.curboard = this.curboard.applyMove(from, direction, distance);
+    // }
 
     // TODO: Validate move direction and distance
     private void validateBasicMove(Position from, Direction direction, int distance) {
@@ -56,6 +56,7 @@ public class Game {
 
     }
 
+    // TODO: Implement stone push mechanic
 
     public Stone checkBoardWin(Board board) {
         int white = 0;
