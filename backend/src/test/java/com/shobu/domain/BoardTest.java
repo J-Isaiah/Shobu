@@ -42,6 +42,70 @@ class BoardTest {
     }
 
     @Test
+    void applyMove_pushesOneOpponentStoneTwoSpaces() {
+        Stone[][] grid = new Stone[4][4];
+
+        grid[1][0] = Stone.WHITE;
+        grid[1][1] = Stone.BLACK;
+        Board board = new Board(grid);
+        System.out.println(board.toString());
+
+        Board newBoard = board.applyMove(
+                new Position(1, 0), Direction.RIGHT, 2, Stone.WHITE);
+        assertNull(newBoard.getStoneAt(new Position(1, 0)));
+        assertNull(newBoard.getStoneAt(new Position(1, 1)));
+
+        assertEquals(Stone.WHITE, newBoard.getStoneAt(new Position(1, 2)));
+
+        assertEquals(Stone.BLACK, newBoard.getStoneAt(new Position(1, 3)));
+
+        System.out.println(newBoard.toString());
+
+    }
+
+    @Test
+    void applyMove_pushesOneOpponentStoneWithGapOneSpace() {
+        Stone[][] grid = new Stone[4][4];
+
+        grid[1][0] = Stone.WHITE;
+        grid[1][2] = Stone.BLACK;
+        Board board = new Board(grid);
+        System.out.println(board.toString());
+
+        Board newBoard = board.applyMove(
+                new Position(1, 0), Direction.RIGHT, 2, Stone.WHITE);
+        assertNull(newBoard.getStoneAt(new Position(1, 0)));
+        assertNull(newBoard.getStoneAt(new Position(1, 1)));
+
+        assertEquals(Stone.WHITE, newBoard.getStoneAt(new Position(1, 2)));
+
+        assertEquals(Stone.BLACK, newBoard.getStoneAt(new Position(1, 3)));
+
+        System.out.println(newBoard.toString());
+
+    }
+
+    @Test
+    void applyMove_pushesOneOpponentStone2SpacesOffBoard() {
+        Stone[][] grid = new Stone[4][4];
+
+        grid[1][1] = Stone.WHITE;
+        grid[1][2] = Stone.BLACK;
+        Board board = new Board(grid);
+        System.out.println(board.toString());
+
+        Board newBoard = board.applyMove(
+                new Position(1, 1), Direction.RIGHT, 2, Stone.WHITE);
+        assertNull(newBoard.getStoneAt(new Position(1, 1)));
+        assertNull(newBoard.getStoneAt(new Position(1, 2)));
+
+        assertEquals(Stone.WHITE, newBoard.getStoneAt(new Position(1, 3)));
+
+        System.out.println(newBoard.toString());
+
+    }
+
+    @Test
     void applyMove_pushesOneOpponentStoneOffBoard() {
         Stone[][] grid = new Stone[4][4];
 
