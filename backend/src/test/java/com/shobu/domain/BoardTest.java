@@ -74,14 +74,14 @@ class BoardTest {
 
         Board newBoard = board.applyMove(
                 new Position(1, 0), Direction.RIGHT, 2, Stone.WHITE);
+
+        System.out.println(newBoard.toString());
         assertNull(newBoard.getStoneAt(new Position(1, 0)));
         assertNull(newBoard.getStoneAt(new Position(1, 1)));
 
         assertEquals(Stone.WHITE, newBoard.getStoneAt(new Position(1, 2)));
 
         assertEquals(Stone.BLACK, newBoard.getStoneAt(new Position(1, 3)));
-
-        System.out.println(newBoard.toString());
 
     }
 

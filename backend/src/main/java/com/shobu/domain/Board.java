@@ -5,6 +5,12 @@ import com.shobu.domain.errors.InvalidMoveException;
 import com.shobu.domain.errors.PieceOutOfBoundsException;
 
 public class Board {
+    private record MovePath(
+            int oneRow,
+            int oneCol,
+            int twoRow,
+            int twoCol, int threeRow, int threeCol) {
+    }
 
     private final Stone[][] grid;
 
@@ -73,7 +79,7 @@ public class Board {
         int newRow = from.getRow() + direction.dx * distance;
         int newCol = from.getCol() + direction.dy * distance;
 
-        if (newRow >= 4 || newRow < 0 || newCol >= 4 || newCol < 0) {
+        if (!isInBounds(newRow, newCol, this.grid)) {
             throw new PieceOutOfBoundsException("Current move set moves piece out side of playable area");
         }
 
@@ -85,27 +91,21 @@ public class Board {
         if (stone != sideToMove) {
             throw new InvalidMoveException("You cannot select an opponants stone to move");
         }
-        // Check Immidate Stone Path
-        int check1Row = from.getRow() + direction.dx;
-        int check1Col = from.getCol() + direction.dy;
-        int check2Row = from.getRow() + direction.dx;
-        int check2Col = from.getCol() + direction.dy;
+        int oneMoveRow = from.getRow() + direction.dx;
+        int oneMoveCol = from.getCol() + direction.dy;
+        int twoMoveRow = from.getRow() + direction.dx * 2;
+        int twoMoveCol = from.getCol() + direction.dy * 2;
+        int thirdMoveCol = from.getCol() + direction.dy * 3;
 
-        Stone oppStoneColor = (stone == Stone.BLACK) ? Stone.WHITE : Stone.BLACK;
+        int thirdMoverow = from.getRow() + direction.dx * 3;
 
-        if (!isInBounds(check1Row, check1Col, this.grid)) {
-            throw new InvalidMoveException("Cannot Commit suiside");
-        }
+        MovePath path = new MovePath(oneMoveRow, oneMoveCol, twoMoveRow, twoMoveCol, thirdMoverow, thirdMoveCol);
 
-        if (distance == 1 && this.grid[check1Row][check1Col] != null) {
-
-            return move1Rock(from, direction, distance, sideToMove, this.grid);
-        } else if (distance == 2 && isInBounds(check2Row, check2Col, grid)) {
-            if ((this.grid[check1Row][check1Col] != null || this.grid[check2Row][check2Col] != null)) {
-                // Push Stone 2 Spaces
-            }
-        } else if (distance == 2 && !isInBounds(check2Col, check2Row, this.grid)) {
-            throw new InvalidMoveException("Cannot Kill Your self");
+        boolean oneSpaceMove = this.grid[oneMoveRow][oneMoveCol] != null;
+        boolean twoSpaceMove = distance == 2 && grid[twoMoveRow][twoMoveCol] != null;
+        boolean needsPush = oneSpaceMove || twoSpaceMove;
+        if (needsPush) {
+            return pushStone(from, direction, distance, sideToMove, this.grid, path);
         }
 
         Stone[][] next = copyGrid(grid);
@@ -116,35 +116,74 @@ public class Board {
 
     }
 
-    private Board move1Rock(Position from, Direction direction, int distance, Stone sideToMove, Stone[][] grid) {
+    private Board pushStone(Position from, Direction direction, int distance, Stone sideToMove, Stone[][] grid,
+            MovePath path) {
         Stone stoneToMove = grid[from.getRow()][from.getCol()];
-        int check1Row = from.getRow() + direction.dx; // Space for cur stone
-        int check1Col = from.getCol() + direction.dy;
-        int check2Row = from.getRow() + direction.dx * 2;// Space for pushed rock
-        int check2Col = from.getCol() + direction.dy * 2;
-
         if (stoneToMove != sideToMove) {
-            throw new CannotPushOwnPieceException("Cannot Push Your OWn Stone");
+            throw new CannotPushOwnPieceException("Must Move Your Own Stone First");
         }
 
         // Check if stone that needs to be pushed is blocked
-        if (isInBounds(check2Row, check2Col, grid) && grid[check2Row][check2Col] != null) {
+        boolean isOnePushBlocked = distance == 1 && isInBounds(path.twoRow(), path.twoCol(), grid)
+                && grid[path.twoRow()][path.twoCol()] != null;
+
+        boolean isLongTwoPushBlocked = distance == 2 && isInBounds(path.threeRow(), path.threeCol(), grid)
+                && grid[path.threeRow()][path.threeCol()] != null;
+
+        boolean isShortTwoBlockedClose = distance == 2 && grid[path.oneRow()][path.oneCol()] != null
+                && grid[path.twoRow()][path.twoCol()] != null;
+
+        if (isOnePushBlocked || isLongTwoPushBlocked || isShortTwoBlockedClose) {
+            System.out.println(
+                    "one=" + isOnePushBlocked
+                            + " longTwo=" + isLongTwoPushBlocked
+                            + " shortTwo=" + isShortTwoBlockedClose + "ghost piece"
+                            + grid[path.threeRow()][path.threeCol()] != null);
             throw new InvalidMoveException("Stone Blocked cannot push");
         }
+
         Stone[][] next = copyGrid(grid);
-        Stone rockToMove = next[check1Row][check1Col]; // Get Rock color to
+
+        Stone rockToMove = null;
+
+        if (distance == 1) {
+
+            rockToMove = next[path.oneRow()][path.oneCol()]; // Get Rock color to
+
+        } else if (distance == 2) {
+            rockToMove = next[path.oneRow()][path.oneCol()] != null ? next[path.oneRow()][path.oneCol()]
+                    : next[path.twoRow()][path.twoCol()]; // Get Rock color to
+        }
+
+        if (rockToMove == sideToMove) {
+            throw new InvalidMoveException("Cannot Push Same Color Stone");
+        }
 
         // Normal Push
-        if (isInBounds(check2Row, check2Col, grid)) {
-            // Move Opp Stone Out Of the way
-            next[check1Row][check1Col] = null;
-            next[check2Row][check2Col] = rockToMove;
+        if (distance == 1) {
+            if (isInBounds(path.twoRow(), path.twoCol(), grid)) {
+                // Move Opp Stone Out Of the way
+                next[path.oneRow()][path.oneCol()] = null;
+                next[path.twoRow()][path.twoCol()] = rockToMove;
 
-            // Set prev stone position to null
+                // Set prev stone position to null
 
-        } else {
-            next[check1Row][check1Col] = null;
+            } else {
+                next[path.oneRow()][path.oneCol()] = null;
+            }
+        } else if (distance == 2) {
+            next[path.oneRow()][path.oneCol()] = null;
+            next[path.twoRow()][path.twoCol()] = null;
+            if (isInBounds(path.threeRow(), path.threeCol(), grid)) {
+                // Move Opp Stone Out Of the way
+
+                next[path.threeRow()][path.threeCol()] = rockToMove;
+
+            } else {
+                next[path.twoRow()][path.twoCol()] = null;
+            }
         }
+
         next[from.getRow() + direction.dx * distance][from.getCol() + direction.dy * distance] = stoneToMove;
         next[from.getRow()][from.getCol()] = null;
 
