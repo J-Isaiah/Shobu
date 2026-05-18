@@ -10,7 +10,13 @@ public class Game {
     private final Stone sideToMove;
     private final EnumMap<BoardId, Board> boards;
 
+    private final Stone winner;
+
     public Game(Stone sideToMove, Map<BoardId, Board> boards) {
+        this(sideToMove, boards, null);
+    }
+
+    public Game(Stone sideToMove, Map<BoardId, Board> boards, Stone winner) {
         if (sideToMove == null || boards == null) {
             throw new IllegalArgumentException("Game fields cannot be null");
         }
@@ -23,6 +29,7 @@ public class Game {
 
         this.sideToMove = sideToMove;
         this.boards = new EnumMap<>(boards);
+        this.winner = winner;
     }
 
     public static Game start(Stone sideToMove) {
@@ -53,11 +60,17 @@ public class Game {
                         turn.aggroMove().distance(),
                         sideToMove);
 
+        Stone winner = checkBoardWin(newAggressiveBoard);
+
         EnumMap<BoardId, Board> nextBoards = new EnumMap<>(boards);
         nextBoards.put(turn.passiveMove().boardId(), newPassiveBoard);
         nextBoards.put(turn.aggroMove().boardId(), newAggressiveBoard);
 
         Stone nextSide = sideToMove == Stone.WHITE ? Stone.BLACK : Stone.WHITE;
+
+        if (winner != null) {
+            return new Game(nextSide, nextBoards, winner);
+        }
 
         return new Game(nextSide, nextBoards);
     }
@@ -90,5 +103,29 @@ public class Game {
 
     public Board getBoardById(BoardId id) {
         return boards.get(id);
+    }
+
+    public Stone checkBoardWin(Board board) {
+        int white = 0;
+        int black = 0;
+
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                Stone cell = board.getStoneAt(new Position(r, c));
+
+                if (cell == Stone.WHITE) {
+                    white++;
+                } else if (cell == Stone.BLACK) {
+                    black++;
+                }
+            }
+        }
+
+        if (white == 0)
+            return Stone.BLACK;
+        if (black == 0)
+            return Stone.WHITE;
+
+        return null;
     }
 }
