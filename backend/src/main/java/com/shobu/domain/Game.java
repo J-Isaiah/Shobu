@@ -128,4 +128,9 @@ public class Game {
 
         return null;
     }
+
+    public Stone getWinner() {
+        return this.winner;
+    }
+
 }
