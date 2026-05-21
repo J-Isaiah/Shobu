@@ -1,0 +1,18 @@
+.board {
+    display: grid;
+    grid-template-columns: repeat(4, 64px);
+    grid-template-rows: repeat(4, 64px);
+    gap: 4px;
+}
+
+.cell {
+    width: 64px;
+    height: 64px;
+}
+.board--dark {
+    background-color: var(--board-dark);
+}
+
+.board--light {
+    background-color: var(--board-light);
+}

@@ -81,7 +81,7 @@ public class Game {
         }
 
         if (turn.passiveMove().boardId().getBoardOwner() != sideToMove) {
-            throw new InvalidMoveException("Passive move must be on current player's home board");
+            throw new InvalidMoveException("Passive move must be on current player's home board.tsx");
         }
 
         if (turn.passiveMove().boardId().getShade() == turn.aggroMove().boardId().getShade()) {

@@ -1,0 +1,13 @@
+.gameSpace {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    align-items: center;
+}
+
+.opponentArea,
+.playerArea {
+    display: flex;
+    gap: 2rem;
+}
