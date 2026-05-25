@@ -8,6 +8,7 @@ export const BoardId = {
 export type BoardId = typeof BoardId[keyof typeof BoardId];
 
 
+
 export const Direction = {
     UP: { row: -1, col: 0 },
     DOWN: { row: 1, col: 0 },

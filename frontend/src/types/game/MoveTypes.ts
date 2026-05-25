@@ -1,5 +1,6 @@
 import type {BoardId, Direction} from "../../enums/game.ts";
 
+export type Stone = "WHITE" | "BLACK" | null;
 export interface Turn{
     passiveMove: Move;
     aggroMove: Move;
@@ -15,3 +16,13 @@ export interface Move{
     direction: Direction;
 }
 
+export interface GameState{
+    gameId: string;
+    sideToMove: "WHITE" | "BLACK";
+    updatedGameBoards: Record<BoardId, Board>;
+    winner: "WHITE" | "BLACK";
+}
+
+export interface Board{
+    grid: Stone[][]
+}
