@@ -4,10 +4,10 @@
     border-radius: 50%;
 }
 
-.stone--black {
+.stone--BLACK{
     background: #111;
 }
 
-.stone--white {
+.stone--WHITE{
     background: #eee;
 }

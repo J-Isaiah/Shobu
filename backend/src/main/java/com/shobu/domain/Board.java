@@ -48,8 +48,8 @@ public class Board {
         Stone[][] board = new Stone[4][4];
 
         for (int c = 0; c < 4; c++) {
-            board[0][c] = Stone.WHITE;
-            board[3][c] = Stone.BLACK;
+            board[0][c] = Stone.BLACK;;
+            board[3][c] = Stone.WHITE;
 
         }
 

@@ -18,19 +18,22 @@ export default function GameWindow(){
     }
     useEffect(() => {void getGameState()}, [gameId])
     console.log(gameState)
+    if (gameState === null) {
+        return <div>Loading...</div>;
+    }
 
 
 
     return (
         <div className="gameSpace">
             <div className="opponentArea">
-                <Board color={"dark"}></Board>
-                <Board color={"light"}></Board>
+                <Board color={"dark"} board={gameState?.updatedGameBoards.BLACK_DARK}></Board>
+                <Board color={"light"} board={gameState?.updatedGameBoards.BLACK_LIGHT}></Board>
             </div>
 
             <div className="playerArea">
-                <Board color={"light"}></Board>
-                <Board color={"dark"}></Board>
+                <Board color={"light"} board={gameState?.updatedGameBoards.WHITE_LIGHT}></Board>
+                <Board color={"dark"} board={gameState?.updatedGameBoards.WHITE_DARK}></Board>
             </div>
 
 
