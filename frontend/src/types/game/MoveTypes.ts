@@ -1,0 +1,17 @@
+import type {BoardId, Direction} from "../../enums/game.ts";
+
+export interface Turn{
+    passiveMove: Move;
+    aggroMove: Move;
+}
+export interface Position {
+    row: 0|1|2|3;
+    col: 0|1|2|3;
+}
+export interface Move{
+    boardId: BoardId;
+    start: Position;
+    distance: 1|2;
+    direction: Direction;
+}
+

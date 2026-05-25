@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.shobu.api.errors.apiExceptions.GameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.shobu.api.dto.request.MakeMoveRequest;
@@ -26,11 +27,14 @@ public class GameService {
 
     public MakeMoveResponse makeMove(UUID gameId, MakeMoveRequest request) {
         Game game = games.get(gameId);
+        if (game==null){
+            throw new GameNotFoundException(gameId);
+        }
 
         Game updatedGame = game.makeMove(request.turn());
         games.put(gameId, updatedGame);
 
-        return new MakeMoveResponse(gameId, updatedGame.getSideToMove(), updatedGame, updatedGame.getWinner());
+        return new MakeMoveResponse(gameId, updatedGame.getSideToMove(), updatedGame.getBoards(), updatedGame.getWinner());
 
     }
 

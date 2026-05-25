@@ -209,4 +209,7 @@ public class Board {
         return row >= 0 && row < grid.length &&
                 col >= 0 && col < grid[0].length;
     }
+    public Stone[][] getGrid() {
+        return copyGrid(this.grid);
+    }
 }

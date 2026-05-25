@@ -133,4 +133,8 @@ public class Game {
         return this.winner;
     }
 
+    public Map<BoardId, Board> getBoards() {
+        return new EnumMap<>(boards);
+    }
+
 }

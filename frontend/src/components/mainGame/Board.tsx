@@ -1,5 +1,5 @@
 import "./Board.css";
-import type { BoardColor } from "../../types/game/board";
+import type { BoardColor } from "../../types/game/board.ts";
 import Cell from "./Cell";
 
 export default function Board({ color }: { color: BoardColor }) {
@@ -8,7 +8,7 @@ export default function Board({ color }: { color: BoardColor }) {
             {Array.from({ length: 16 }).map((_, index) => (
                 <Cell
                     key={index}
-                    stone="black"
+                    stone="white"
                 />
             ))}
         </div>

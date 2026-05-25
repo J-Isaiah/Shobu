@@ -2,6 +2,7 @@ import Board from "../components/mainGame/Board.tsx";
 import "./gameWindow.css"
 
 export default function GameWindow(){
+
     return (
         <div className="gameSpace">
             <div className="opponentArea">
