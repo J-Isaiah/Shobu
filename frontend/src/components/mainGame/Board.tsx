@@ -1,14 +1,14 @@
 import "./Board.css";
 import type { BoardColor } from "../../types/game/board.ts";
 import Cell from "./Cell";
-import type {Board, OnCellClick} from "../../types/game/MoveTypes.ts";
+import type {Board, BoardCoordinate, OnCellClick} from "../../types/game/MoveTypes.ts";
 import type {BoardId} from "../../enums/game.ts";
-function toBoardCoordinate(value: number): BoardCordinate {
+function toBoardCoordinate(value: number): BoardCoordinate {
     if (value < 0 || value > 3) {
         throw new Error("Invalid board coordinate");
     }
 
-    return value as BoardCordinate;
+    return value as BoardCoordinate;
 }
 export default function Board({ color, board, boardId, onCellClick }: { color: BoardColor, board: Board, boardId: BoardId, onCellClick: OnCellClick}) {
 
