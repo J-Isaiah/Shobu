@@ -3,7 +3,8 @@ package com.shobu.domain;
 import com.shobu.domain.errors.CannotPushOwnPieceException;
 import com.shobu.domain.errors.InvalidMoveException;
 import com.shobu.domain.errors.PieceOutOfBoundsException;
-
+// TODO: Protect when a player tries to do move 2 on the same board as move 1
+//TODO: Make sure that you cannot push a player during your passive move
 public class Board {
     private record MovePath(
             int oneRow,

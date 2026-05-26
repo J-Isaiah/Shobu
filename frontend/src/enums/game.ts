@@ -10,17 +10,17 @@ export type BoardId = typeof BoardId[keyof typeof BoardId];
 
 
 export const Direction = {
-    UP: { row: -1, col: 0 },
-    DOWN: { row: 1, col: 0 },
+    UP: "UP",
+    DOWN: "DOWN",
 
-    LEFT: { row: 0, col: -1 },
-    RIGHT: { row: 0, col: 1 },
+    LEFT: "LEFT",
+    RIGHT: "RIGHT",
 
-    UP_LEFT: { row: -1, col: -1 },
-    UP_RIGHT: { row: -1, col: 1 },
+    UP_LEFT: "UP_LEFT",
+    UP_RIGHT: "UP_RIGHT",
 
-    DOWN_LEFT: { row: 1, col: -1 },
-    DOWN_RIGHT: { row: 1, col: 1 },
+    DOWN_LEFT: "DOWN_LEFT",
+    DOWN_RIGHT:"DOWN_RIGHT",
 } as const;
 
 export type Direction =

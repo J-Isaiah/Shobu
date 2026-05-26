@@ -1,11 +1,16 @@
 import "./Board.css";
 import type { BoardColor } from "../../types/game/board.ts";
 import Cell from "./Cell";
-import type {Board} from "../../types/game/MoveTypes.ts";
+import type {Board, OnCellClick} from "../../types/game/MoveTypes.ts";
+import type {BoardId} from "../../enums/game.ts";
+function toBoardCoordinate(value: number): BoardCordinate {
+    if (value < 0 || value > 3) {
+        throw new Error("Invalid board coordinate");
+    }
 
-export default function Board({ color, board }: { color: BoardColor, board: Board }) {
-    console.log("Board:", color, board);
-    console.log("Grid:", board.grid);
+    return value as BoardCordinate;
+}
+export default function Board({ color, board, boardId, onCellClick }: { color: BoardColor, board: Board, boardId: BoardId, onCellClick: OnCellClick}) {
 
     return (
         <div className={`board board--${color}`}>
@@ -14,6 +19,9 @@ export default function Board({ color, board }: { color: BoardColor, board: Boar
                     <Cell
                         key={`${rowIndex}-${colIndex}`}
                         stone={stone}
+                        onClick={onCellClick}
+                        boardId={boardId}
+                        position={{row: toBoardCoordinate(rowIndex), col:toBoardCoordinate(colIndex)}}
                     />
                 ))
             )}

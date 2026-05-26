@@ -6,8 +6,8 @@
     align-items: center;
 }
 
-.opponentArea,
-.playerArea {
+.blackSide,
+.whiteSide{
     display: flex;
     gap: 2rem;
 }
