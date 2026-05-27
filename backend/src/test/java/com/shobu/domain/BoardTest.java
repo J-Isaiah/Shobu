@@ -15,8 +15,8 @@ class BoardTest {
         Board board = Board.inital();
 
         for (int c = 0; c < 4; c++) {
-            assertEquals(Stone.WHITE, board.getStoneAt(new Position(0, c)));
-            assertEquals(Stone.BLACK, board.getStoneAt(new Position(3, c)));
+            assertEquals(Stone.BLACK, board.getStoneAt(new Position(0, c)));
+            assertEquals(Stone.WHITE, board.getStoneAt(new Position(3, c)));
         }
     }
 
@@ -39,7 +39,7 @@ class BoardTest {
                 whiteStart,
                 direction,
                 distance,
-                Stone.WHITE);
+                Stone.WHITE, null);
 
         assertNull(newBoard.getStoneAt(whiteStart));
 
@@ -265,7 +265,7 @@ class BoardTest {
                 new Position(1, 1),
                 Direction.RIGHT,
                 2,
-                Stone.WHITE);
+                Stone.WHITE, null);
 
         assertNull(newBoard.getStoneAt(new Position(1, 1)));
         assertNull(newBoard.getStoneAt(new Position(1, 2)));
@@ -289,7 +289,7 @@ class BoardTest {
                 new Position(2, 2),
                 Direction.RIGHT,
                 1,
-                Stone.WHITE);
+                Stone.WHITE, null);
 
         assertNull(newBoard.getStoneAt(new Position(2, 2)));
 
@@ -315,6 +315,6 @@ class BoardTest {
                         new Position(2, 0),
                         Direction.RIGHT,
                         1,
-                        Stone.WHITE));
+                        Stone.WHITE,null));
     }
 }

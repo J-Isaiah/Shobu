@@ -3,7 +3,6 @@ package com.shobu.domain;
 import com.shobu.domain.errors.CannotPushOwnPieceException;
 import com.shobu.domain.errors.InvalidMoveException;
 import com.shobu.domain.errors.PieceOutOfBoundsException;
-// TODO: Protect when a player tries to do move 2 on the same board as move 1
 //TODO: Make sure that you cannot push a player during your passive move
 public class Board {
     private record MovePath(
@@ -68,7 +67,7 @@ public class Board {
 
     }
 
-    public Board applyMove(Position from, Direction direction, int distance, Stone sideToMove) {
+    public Board applyMove(Position from, Direction direction, int distance, Stone sideToMove, MoveType moveType) {
 
         if (from == null || direction == null) {
             throw new IllegalArgumentException("From Position Direction Or distance cannot be null");
@@ -106,11 +105,15 @@ public class Board {
         boolean twoSpaceMove = distance == 2 && grid[twoMoveRow][twoMoveCol] != null;
         boolean needsPush = oneSpaceMove || twoSpaceMove;
         if (needsPush) {
+            if (moveType == MoveType.PASSIVE) {
+                throw new InvalidMoveException("Cannot push stone during the your passive move");
+
+            }
             return pushStone(from, direction, distance, sideToMove, this.grid, path);
         }
 
         Stone[][] next = copyGrid(grid);
-        next[from.getRow() + direction.dx * distance][from.getCol() + direction.dy * distance] = stone;
+        next[newRow][newCol] = stone;
         next[from.getRow()][from.getCol()] = null;
 
         return new Board(next);
@@ -195,14 +198,21 @@ public class Board {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+
+        sb.append("  0 1 2 3\n");
+
         for (int r = 0; r < 4; r++) {
+            sb.append(r).append(" ");
+
             for (int c = 0; c < 4; c++) {
                 Stone s = grid[r][c];
                 sb.append(s == null ? "." : s.name().charAt(0));
                 sb.append(" ");
             }
+
             sb.append("\n");
         }
+
         return sb.toString();
     }
 

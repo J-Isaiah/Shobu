@@ -51,14 +51,14 @@ public class Game {
                         turn.passiveMove().start(),
                         turn.passiveMove().direction(),
                         turn.passiveMove().distance(),
-                        sideToMove);
+                        sideToMove, MoveType.PASSIVE);
 
         Board newAggressiveBoard = getBoardById(turn.aggroMove().boardId())
                 .applyMove(
                         turn.aggroMove().start(),
                         turn.aggroMove().direction(),
                         turn.aggroMove().distance(),
-                        sideToMove);
+                        sideToMove, MoveType.AGGRESSIVE);
 
         Stone winner = checkBoardWin(newAggressiveBoard);
 
