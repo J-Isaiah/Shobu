@@ -1,7 +1,7 @@
 package com.shobu.domain.moveData;
 
-import com.shobu.domain.BoardId;
-import com.shobu.domain.Direction;
+import com.shobu.domain.enums.BoardId;
+import com.shobu.domain.enums.Direction;
 import com.shobu.domain.Position;
 
 public record Move(

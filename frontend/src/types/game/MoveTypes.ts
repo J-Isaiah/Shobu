@@ -8,7 +8,7 @@ export interface MakeMoveRequest {
 }
 export interface Turn{
     passiveMove: Move;
-    aggroMove: Move;
+    aggressiveMove: Move;
 }
 export interface Position {
     row:BoardCoordinate;

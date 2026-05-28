@@ -4,6 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.shobu.domain.enums.Direction;
+import com.shobu.domain.enums.Stone;
+import com.shobu.domain.enums.TurnPhase;
+import com.shobu.domain.errors.CannotPushOwnPieceException;
+import com.shobu.domain.errors.PieceOutOfBoundsException;
+import com.shobu.domain.moveData.Move;
 import org.junit.jupiter.api.Test;
 
 import com.shobu.domain.errors.InvalidMoveException;
@@ -39,7 +45,7 @@ class BoardTest {
                 whiteStart,
                 direction,
                 distance,
-                Stone.WHITE, null);
+                TurnPhase.WHITE_PASSIVE);
 
         assertNull(newBoard.getStoneAt(whiteStart));
 
@@ -265,7 +271,7 @@ class BoardTest {
                 new Position(1, 1),
                 Direction.RIGHT,
                 2,
-                Stone.WHITE, null);
+                TurnPhase.WHITE_PASSIVE);
 
         assertNull(newBoard.getStoneAt(new Position(1, 1)));
         assertNull(newBoard.getStoneAt(new Position(1, 2)));
@@ -274,7 +280,6 @@ class BoardTest {
                 Stone.WHITE,
                 newBoard.getStoneAt(new Position(1, 3)));
     }
-
     @Test
     void applyMove_distance1_pushesOpponentStoneOffBoardRight() {
 
@@ -289,7 +294,7 @@ class BoardTest {
                 new Position(2, 2),
                 Direction.RIGHT,
                 1,
-                Stone.WHITE, null);
+                TurnPhase.WHITE_PASSIVE);
 
         assertNull(newBoard.getStoneAt(new Position(2, 2)));
 
@@ -315,6 +320,6 @@ class BoardTest {
                         new Position(2, 0),
                         Direction.RIGHT,
                         1,
-                        Stone.WHITE,null));
+                        TurnPhase.WHITE_PASSIVE));
     }
 }

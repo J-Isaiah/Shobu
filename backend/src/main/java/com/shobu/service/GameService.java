@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.shobu.api.errors.apiExceptions.GameNotFoundException;
+import com.shobu.domain.enums.Stone;
 import org.springframework.stereotype.Service;
 
 import com.shobu.api.dto.request.MakeMoveRequest;
@@ -19,7 +20,7 @@ public class GameService {
 
     public StartGameResponse startGame(StartGameRequest request) {
         UUID id = UUID.randomUUID();
-        Game game = Game.start(request.startSide());
+        Game game = Game.start(Stone.WHITE);
 
         games.put(id, game);
         return new StartGameResponse(id, game);
@@ -31,7 +32,7 @@ public class GameService {
             throw new GameNotFoundException(gameId);
         }
 
-        Game updatedGame = game.makeMove(request.turn());
+        Game updatedGame = game.makeMove(request.move());
         games.put(gameId, updatedGame);
 
         return new GameState(gameId, updatedGame.getSideToMove(), updatedGame.getBoards(), updatedGame.getWinner());

@@ -1,9 +1,9 @@
 package com.shobu.api.dto.request;
 
+import com.shobu.domain.moveData.Move;
+
 import java.util.UUID;
 
-import com.shobu.domain.moveData.Turn;
-
-public record MakeMoveRequest(UUID userId, Turn turn) {
+public record MakeMoveRequest(UUID userId, Move move) {
 
 }

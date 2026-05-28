@@ -88,16 +88,16 @@ export default function GameWindow() {
 
     const makeMove = async ({
                                 passiveMove,
-                                aggroMove,
+                                aggressiveMove,
                             }: {
         passiveMove: Move;
-        aggroMove: Move;
+        aggressiveMove: Move;
     }): Promise<void> => {
         const payload: MakeMoveRequest = {
             userId: "e4526351-ff88-4655-b534-c40de2d294b9",
             turn: {
                 passiveMove,
-                aggroMove,
+                aggressiveMove,
             },
         };
         console.log("payload", payload);
@@ -167,7 +167,7 @@ export default function GameWindow() {
 
         if (phase === "AGGRESSIVE_END" && selectedStart && passiveMove) {
             try {
-                const aggroMove = buildMove(
+                const aggressiveMove = buildMove(
                     selectedStart.boardId,
                     { row: selectedStart.row, col: selectedStart.col },
                     clickedPosition
@@ -175,7 +175,7 @@ export default function GameWindow() {
 
                 void makeMove({
                     passiveMove,
-                    aggroMove,
+                    aggressiveMove,
                 });
             } catch (error) {
                 setErrorMessage(error instanceof Error ? error.message : "Invalid aggressive move.");

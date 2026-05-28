@@ -3,21 +3,26 @@ package com.shobu.domain;
 import java.util.EnumMap;
 import java.util.Map;
 
+import com.shobu.domain.enums.BoardId;
+import com.shobu.domain.enums.Stone;
+import com.shobu.domain.enums.TurnPhase;
 import com.shobu.domain.errors.InvalidMoveException;
-import com.shobu.domain.moveData.Turn;
+import com.shobu.domain.moveData.Move;
 
 public class Game {
-    private final Stone sideToMove;
+    private final TurnPhase turnPhase;
+    private final Move pendingPassiveMove;
     private final EnumMap<BoardId, Board> boards;
 
     private final Stone winner;
-
-    public Game(Stone sideToMove, Map<BoardId, Board> boards) {
-        this(sideToMove, boards, null);
+    public Game(TurnPhase turnPhase , Map<BoardId, Board> boards) {
+        this(turnPhase,null, boards,  null);
     }
-
-    public Game(Stone sideToMove, Map<BoardId, Board> boards, Stone winner) {
-        if (sideToMove == null || boards == null) {
+    public Game(TurnPhase turnPhase,Move pendingPassiveMove, Map<BoardId, Board> boards) {
+        this(turnPhase,pendingPassiveMove, boards,  null);
+    }
+    public Game(TurnPhase turnPhase,Move pendingPassiveMove, Map<BoardId, Board> boards, Stone winner) {
+        if (turnPhase== null || boards == null) {
             throw new IllegalArgumentException("Game fields cannot be null");
         }
 
@@ -27,12 +32,13 @@ public class Game {
             }
         }
 
-        this.sideToMove = sideToMove;
+        this.turnPhase = turnPhase;
+        this.pendingPassiveMove = pendingPassiveMove;
         this.boards = new EnumMap<>(boards);
         this.winner = winner;
     }
 
-    public static Game start(Stone sideToMove) {
+    public static Game start(Stone startColor) {
         EnumMap<BoardId, Board> boards = new EnumMap<>(BoardId.class);
 
         boards.put(BoardId.BLACK_LIGHT, Board.inital());
@@ -40,65 +46,64 @@ public class Game {
         boards.put(BoardId.WHITE_LIGHT, Board.inital());
         boards.put(BoardId.WHITE_DARK, Board.inital());
 
-        return new Game(sideToMove, boards);
+        return new Game(TurnPhase.passivePhaseFor(startColor), boards);
     }
 
-    public Game makeMove(Turn turn) {
-        validateTurn(turn);
+    public Game makeMove(Move move) {
+        validateTurn(move);
 
-        Board newPassiveBoard = getBoardById(turn.passiveMove().boardId())
+        Board newBoard= getBoardById(move.boardId())
                 .applyMove(
-                        turn.passiveMove().start(),
-                        turn.passiveMove().direction(),
-                        turn.passiveMove().distance(),
-                        sideToMove, MoveType.PASSIVE);
+                        move.start(),
+                        move.direction(),
+                        move.distance(),
+                        turnPhase);
 
-        Board newAggressiveBoard = getBoardById(turn.aggroMove().boardId())
-                .applyMove(
-                        turn.aggroMove().start(),
-                        turn.aggroMove().direction(),
-                        turn.aggroMove().distance(),
-                        sideToMove, MoveType.AGGRESSIVE);
 
-        Stone winner = checkBoardWin(newAggressiveBoard);
+        Stone winner = checkBoardWin(newBoard);
 
         EnumMap<BoardId, Board> nextBoards = new EnumMap<>(boards);
-        nextBoards.put(turn.passiveMove().boardId(), newPassiveBoard);
-        nextBoards.put(turn.aggroMove().boardId(), newAggressiveBoard);
+        nextBoards.put(move.boardId(), newBoard);
 
-        Stone nextSide = sideToMove == Stone.WHITE ? Stone.BLACK : Stone.WHITE;
+       TurnPhase nextPhase = turnPhase.next();
+
 
         if (winner != null) {
-            return new Game(nextSide, nextBoards, winner);
+            return new Game(TurnPhase.GAME_OVER,move, nextBoards, winner);
         }
 
-        return new Game(nextSide, nextBoards);
+        return new Game(nextPhase,move, nextBoards);
     }
 
-    private void validateTurn(Turn turn) {
-        if (turn == null) {
+    private void validateTurn(Move move) {
+        if (move== null) {
             throw new IllegalArgumentException("Turn cannot be null");
         }
 
-        if (turn.passiveMove().boardId().getBoardOwner() != sideToMove) {
+        if (!turnPhase.isAggressive() && boards.get(move.boardId()).moveWouldPush(move)){
+            throw new InvalidMoveException("cannot push a stone during passive stage");
+        }
+
+        if (!turnPhase.isAggressive() && move.boardId().getBoardOwner() != turnPhase.getSideToMove()) {
+
             throw new InvalidMoveException("Passive move must be on current player's home board.tsx");
         }
 
-        if (turn.passiveMove().boardId().getShade() == turn.aggroMove().boardId().getShade()) {
+        if (this.turnPhase.isAggressive() && move.boardId().getShade() == this.pendingPassiveMove.boardId().getShade()) {
             throw new InvalidMoveException("Aggressive move must be on opposite shade");
         }
 
-        if (turn.passiveMove().distance() != turn.aggroMove().distance()) {
+        if (this.turnPhase.isAggressive()&&this.pendingPassiveMove.distance() != move.distance()) {
             throw new InvalidMoveException("Aggressive move distance must match passive move distance");
         }
 
-        if (turn.passiveMove().direction() != turn.aggroMove().direction()) {
+        if (this.turnPhase.isAggressive()&&pendingPassiveMove.direction() != move.direction()) {
             throw new InvalidMoveException("Aggressive move direction must match passive move direction");
         }
     }
 
     public Stone getSideToMove() {
-        return sideToMove;
+        return turnPhase.getSideToMove();
     }
 
     public Board getBoardById(BoardId id) {

@@ -1,8 +1,13 @@
 package com.shobu.domain;
 
+import com.shobu.domain.enums.Direction;
+import com.shobu.domain.enums.Stone;
+import com.shobu.domain.enums.TurnPhase;
 import com.shobu.domain.errors.CannotPushOwnPieceException;
 import com.shobu.domain.errors.InvalidMoveException;
 import com.shobu.domain.errors.PieceOutOfBoundsException;
+import com.shobu.domain.moveData.Move;
+
 //TODO: Make sure that you cannot push a player during your passive move
 public class Board {
     private record MovePath(
@@ -67,7 +72,7 @@ public class Board {
 
     }
 
-    public Board applyMove(Position from, Direction direction, int distance, Stone sideToMove, MoveType moveType) {
+    public Board applyMove(Position from, Direction direction, int distance, TurnPhase turnPhase) {
 
         if (from == null || direction == null) {
             throw new IllegalArgumentException("From Position Direction Or distance cannot be null");
@@ -88,7 +93,7 @@ public class Board {
             throw new IllegalArgumentException("From position must contain a stone");
         }
 
-        if (stone != sideToMove) {
+        if (stone != turnPhase.getSideToMove()) {
             throw new InvalidMoveException("You cannot select an opponants stone to move");
         }
         int oneMoveRow = from.getRow() + direction.dx;
@@ -105,11 +110,7 @@ public class Board {
         boolean twoSpaceMove = distance == 2 && grid[twoMoveRow][twoMoveCol] != null;
         boolean needsPush = oneSpaceMove || twoSpaceMove;
         if (needsPush) {
-            if (moveType == MoveType.PASSIVE) {
-                throw new InvalidMoveException("Cannot push stone during the your passive move");
-
-            }
-            return pushStone(from, direction, distance, sideToMove, this.grid, path);
+            return pushStone(from, direction, distance, turnPhase, this.grid, path);
         }
 
         Stone[][] next = copyGrid(grid);
@@ -120,10 +121,10 @@ public class Board {
 
     }
 
-    private Board pushStone(Position from, Direction direction, int distance, Stone sideToMove, Stone[][] grid,
-            MovePath path) {
+    private Board pushStone(Position from, Direction direction, int distance, TurnPhase turnPhase, Stone[][] grid,
+                            MovePath path) {
         Stone stoneToMove = grid[from.getRow()][from.getCol()];
-        if (stoneToMove != sideToMove) {
+        if (stoneToMove != turnPhase.getSideToMove()) {
             throw new CannotPushOwnPieceException("Must Move Your Own Stone First");
         }
 
@@ -138,11 +139,6 @@ public class Board {
                 && grid[path.twoRow()][path.twoCol()] != null;
 
         if (isOnePushBlocked || isLongTwoPushBlocked || isShortTwoBlockedClose) {
-            System.out.println(
-                    "one=" + isOnePushBlocked
-                            + " longTwo=" + isLongTwoPushBlocked
-                            + " shortTwo=" + isShortTwoBlockedClose + "ghost piece"
-                            + grid[path.threeRow()][path.threeCol()] != null);
             throw new InvalidMoveException("Stone Blocked cannot push");
         }
 
@@ -159,7 +155,7 @@ public class Board {
                     : next[path.twoRow()][path.twoCol()]; // Get Rock color to
         }
 
-        if (rockToMove == sideToMove) {
+        if (rockToMove == turnPhase.getSideToMove()) {
             throw new InvalidMoveException("Cannot Push Same Color Stone");
         }
 
@@ -222,5 +218,20 @@ public class Board {
     }
     public Stone[][] getGrid() {
         return copyGrid(this.grid);
+    }
+    public boolean moveWouldPush(Move move) {
+        int oneRow = move.start().getRow() + move.direction().dx;
+        int oneCol = move.start().getCol() + move.direction().dy;
+
+        int twoRow = move.start().getRow() + move.direction().dx * 2;
+        int twoCol = move.start().getCol() + move.direction().dy * 2;
+
+        boolean oneSpaceBlocked = grid[oneRow][oneCol] != null;
+
+        boolean twoSpaceBlocked =
+                move.distance() == 2 &&
+                        grid[twoRow][twoCol] != null;
+
+        return oneSpaceBlocked || twoSpaceBlocked;
     }
 }

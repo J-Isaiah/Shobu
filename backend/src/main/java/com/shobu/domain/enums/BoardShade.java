@@ -1,4 +1,4 @@
-package com.shobu.domain;
+package com.shobu.domain.enums;
 
 public enum BoardShade {
     LIGHT,
