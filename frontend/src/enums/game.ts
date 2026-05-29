@@ -1,3 +1,5 @@
+import type {BoardCoordinate} from "../types/game/MoveTypes.ts";
+
 export const BoardId = {
     BLACK_LIGHT: "BLACK_LIGHT",
     BLACK_DARK: "BLACK_DARK",
@@ -25,3 +27,12 @@ export const Direction = {
 
 export type Direction =
     typeof Direction[keyof typeof Direction];
+
+export type CellSelection = {
+    boardId: BoardId;
+    position:{
+        row: BoardCoordinate;
+        col: BoardCoordinate;
+    }
+
+};

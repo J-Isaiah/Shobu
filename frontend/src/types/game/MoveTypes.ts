@@ -4,12 +4,9 @@ export type StoneColor = "WHITE" | "BLACK" | null;
 export type PlayerColor = "WHITE" | "BLACK"
 export interface MakeMoveRequest {
     userId: string;
-    turn: Turn;
+    move: Move;
 }
-export interface Turn{
-    passiveMove: Move;
-    aggressiveMove: Move;
-}
+
 export interface Position {
     row:BoardCoordinate;
     col:BoardCoordinate;
@@ -25,7 +22,7 @@ export interface Move{
 
 export interface GameState{
     gameId: string;
-    sideToMove: "WHITE" | "BLACK";
+    turnPhase: TurnPhase
     updatedGameBoards: Record<BoardId, Board>;
     winner: "WHITE" | "BLACK";
 }
@@ -34,11 +31,11 @@ export interface Board{
     grid: StoneColor[][]
 }
 
-export type MovePhase =
-    | "PASSIVE_START"
-    | "PASSIVE_END"
-    | "AGGRESSIVE_START"
-    | "AGGRESSIVE_END";
+export type TurnPhase=
+    | "WHITE_PASSIVE"
+    | "WHITE_AGGRESSIVE"
+    | "BLACK_PASSIVE"
+    | "BLACK_AGGRESSIVE";
 
 export interface SelectedCell {
     boardId: BoardId;

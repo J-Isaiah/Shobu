@@ -35,7 +35,7 @@ public class GameService {
         Game updatedGame = game.makeMove(request.move());
         games.put(gameId, updatedGame);
 
-        return new GameState(gameId, updatedGame.getSideToMove(), updatedGame.getBoards(), updatedGame.getWinner());
+        return new GameState(gameId, updatedGame.getTurnPhase(), updatedGame.getBoards(), updatedGame.getWinner());
 
     }
     public GameState getGameState(UUID gameId) {
@@ -43,7 +43,7 @@ public class GameService {
         if (game==null){
             throw new GameNotFoundException(gameId);
         }
-        return new GameState(gameId, game.getSideToMove(), game.getBoards(), game.getWinner());
+        return new GameState(gameId, game.getTurnPhase(), game.getBoards(), game.getWinner());
 
     }
 }

@@ -5,7 +5,7 @@ export default function GameOptionMenu() {
 
     const startGame = async () => {
             const payload = {
-                startSide: "WHITE",
+                startSide: "WHITE_PASSIVE",
                 player1: {"userId":"1497e843-a462-4ec1-ad2d-9dc85b0a694a","userName": "Isaiah"},
                 player2:  {"userId":"1497e843-a462-4ec1-ad2d-9dc85b0a694a","userName": "NotISaiah"}
             };

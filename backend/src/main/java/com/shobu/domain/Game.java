@@ -142,4 +142,7 @@ public class Game {
         return new EnumMap<>(boards);
     }
 
+    public TurnPhase getTurnPhase() {
+        return this.turnPhase;
+    }
 }
