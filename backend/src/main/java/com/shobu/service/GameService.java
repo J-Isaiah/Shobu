@@ -22,6 +22,8 @@ public class GameService {
         UUID id = UUID.randomUUID();
         Game game = Game.start(Stone.WHITE);
 
+        // TODO: Return legal moves
+
         games.put(id, game);
         return new StartGameResponse(id, game);
     }
@@ -33,6 +35,8 @@ public class GameService {
         }
 
         Game updatedGame = game.makeMove(request.move());
+
+        // TODO: Return legal moves
         games.put(gameId, updatedGame);
 
         return new GameState(gameId, updatedGame.getTurnPhase(), updatedGame.getBoards(), updatedGame.getWinner());
@@ -43,6 +47,8 @@ public class GameService {
         if (game==null){
             throw new GameNotFoundException(gameId);
         }
+
+        // TODO: Return legal moves
         return new GameState(gameId, game.getTurnPhase(), game.getBoards(), game.getWinner());
 
     }

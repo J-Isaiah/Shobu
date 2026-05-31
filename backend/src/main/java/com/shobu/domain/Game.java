@@ -145,4 +145,13 @@ public class Game {
     public TurnPhase getTurnPhase() {
         return this.turnPhase;
     }
+
+    public boolean canMakeMove(Move move) {
+        try {
+            makeMove(move);
+            return true;
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
 }
