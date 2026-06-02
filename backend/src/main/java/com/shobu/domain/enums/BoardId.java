@@ -1,5 +1,7 @@
 package com.shobu.domain.enums;
 
+import java.util.List;
+
 public enum BoardId {
     BLACK_LIGHT,
     BLACK_DARK,
@@ -10,7 +12,6 @@ public enum BoardId {
         return switch (this) {
             case BLACK_LIGHT, WHITE_LIGHT -> BoardShade.LIGHT;
             case BLACK_DARK, WHITE_DARK -> BoardShade.DARK;
-
         };
     }
 
@@ -19,6 +20,15 @@ public enum BoardId {
             case WHITE_DARK, WHITE_LIGHT -> Stone.WHITE;
             case BLACK_DARK, BLACK_LIGHT -> Stone.BLACK;
         };
+    }
 
+    public List<BoardId> aggressiveBoards() {
+        return switch (this) {
+            case BLACK_LIGHT, WHITE_LIGHT ->
+                    List.of(BLACK_DARK, WHITE_DARK);
+
+            case BLACK_DARK, WHITE_DARK ->
+                    List.of(BLACK_LIGHT, WHITE_LIGHT);
+        };
     }
 }

@@ -146,12 +146,11 @@ public class Game {
         return this.turnPhase;
     }
 
-    public boolean canMakeMove(Move move) {
+    public Game tryMakeMove(Move move) {
         try {
-            makeMove(move);
-            return true;
+            return makeMove(move);
         } catch (RuntimeException e) {
-            return false;
+            return null;
         }
     }
 }
