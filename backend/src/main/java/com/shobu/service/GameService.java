@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.shobu.GenerateLegalMoves;
 import com.shobu.api.errors.apiExceptions.GameNotFoundException;
 import com.shobu.domain.enums.Stone;
 import org.springframework.stereotype.Service;
@@ -21,35 +22,40 @@ public class GameService {
     public StartGameResponse startGame(StartGameRequest request) {
         UUID id = UUID.randomUUID();
         Game game = Game.start(Stone.WHITE);
+        GenerateLegalMoves generator = new GenerateLegalMoves(game);
+
 
         // TODO: Return legal moves
 
         games.put(id, game);
-        return new StartGameResponse(id, game);
+        return new StartGameResponse(id, game, generator.generateLegalMovesByBoardAndPosition());
     }
 
     public GameState makeMove(UUID gameId, MakeMoveRequest request) {
         Game game = games.get(gameId);
-        if (game==null){
+        if (game == null) {
             throw new GameNotFoundException(gameId);
         }
 
         Game updatedGame = game.makeMove(request.move());
+        GenerateLegalMoves generator = new GenerateLegalMoves(updatedGame);
 
         // TODO: Return legal moves
         games.put(gameId, updatedGame);
 
-        return new GameState(gameId, updatedGame.getTurnPhase(), updatedGame.getBoards(), updatedGame.getWinner());
+        return new GameState(gameId, updatedGame.getTurnPhase(), updatedGame.getBoards(), updatedGame.getWinner(), generator.generateLegalMovesByBoardAndPosition());
 
     }
+
     public GameState getGameState(UUID gameId) {
         Game game = games.get(gameId);
-        if (game==null){
+        GenerateLegalMoves generator = new GenerateLegalMoves(game);
+        if (game == null) {
             throw new GameNotFoundException(gameId);
         }
 
         // TODO: Return legal moves
-        return new GameState(gameId, game.getTurnPhase(), game.getBoards(), game.getWinner());
+        return new GameState(gameId, game.getTurnPhase(), game.getBoards(), game.getWinner(), generator.generateLegalMovesByBoardAndPosition());
 
     }
 }
