@@ -40,5 +40,8 @@ public final class Position {
     public int getCol() {
         return col;
     }
+    public String toKey(){
+        return row + "," + col;
+    }
 
 }

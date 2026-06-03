@@ -108,8 +108,8 @@ public class GenerateLegalMoves {
         return aggressiveMoves;
     }
 
-    public EnumMap<BoardId, Map<Position, List<LegalMove>>> generateLegalMovesByBoardAndPosition() {
-        EnumMap<BoardId, Map<Position, List<LegalMove>>> movesByBoard =
+    public EnumMap<BoardId, Map<String, List<LegalMove>>> generateLegalMovesByBoardAndPosition() {
+        EnumMap<BoardId, Map<String, List<LegalMove>>> movesByBoard =
                 new EnumMap<>(BoardId.class);
 
         for (LegalMove legalMove : generateLegalMoves()) {
@@ -117,7 +117,7 @@ public class GenerateLegalMoves {
 
             movesByBoard
                     .computeIfAbsent(passiveMove.boardId(), ignored -> new HashMap<>())
-                    .computeIfAbsent(passiveMove.start(), ignored -> new ArrayList<>())
+                    .computeIfAbsent(passiveMove.start().toKey(), ignored -> new ArrayList<>())
                     .add(legalMove);
         }
 

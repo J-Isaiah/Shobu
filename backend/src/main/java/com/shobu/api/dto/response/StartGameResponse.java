@@ -10,6 +10,6 @@ import com.shobu.domain.Position;
 import com.shobu.domain.enums.BoardId;
 import com.shobu.domain.moveData.LegalMove;
 
-public record StartGameResponse(UUID gameId, Game game, EnumMap<BoardId, Map<Position, List<LegalMove>>> legalMovesForPlayer) {
+public record StartGameResponse(UUID gameId, Game game, EnumMap<BoardId, Map<String, List<LegalMove>>> legalMovesForPlayer) {
 
 }
