@@ -1,7 +1,5 @@
-package com.shobu;
+package com.shobu.domain;
 
-import com.shobu.domain.Game;
-import com.shobu.domain.Position;
 import com.shobu.domain.enums.BoardId;
 import com.shobu.domain.enums.Direction;
 import com.shobu.domain.enums.Stone;

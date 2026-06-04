@@ -2,3 +2,8 @@ button {
     background: none;
 
 }
+.highlighted {
+    outline: 3px solid blue;
+    cursor: pointer;
+
+}

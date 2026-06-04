@@ -2,36 +2,49 @@ import type {BoardId, Direction} from "../../enums/game.ts";
 
 export type StoneColor = "WHITE" | "BLACK" | null;
 export type PlayerColor = "WHITE" | "BLACK"
+
 export interface MakeMoveRequest {
     userId: string;
     move: Move;
 }
 
 export interface Position {
-    row:BoardCoordinate;
-    col:BoardCoordinate;
+    row: BoardCoordinate;
+    col: BoardCoordinate;
 }
-export type BoardCoordinate = 0|1|2|3;
-export type MoveDistances=1|2
-export interface Move{
+
+export type BoardCoordinate = 0 | 1 | 2 | 3;
+export type MoveDistances = 1 | 2
+
+export interface Move {
     boardId: BoardId;
     start: Position;
     distance: MoveDistances
     direction: Direction;
 }
 
-export interface GameState{
+export interface GameState {
     gameId: string;
-    turnPhase: TurnPhase
+    turnPhase: TurnPhase;
     updatedGameBoards: Record<BoardId, Board>;
-    winner: "WHITE" | "BLACK";
+    winner: "WHITE" | "BLACK" | null;
+    legalMovesForPlayer: LegalMovesForPlayer;
 }
 
-export interface Board{
+export interface Board {
     grid: StoneColor[][]
 }
 
-export type TurnPhase=
+export interface LegalMove {
+    passiveMove: Move;
+    aggressiveMoves: Move[];
+}
+
+export type LegalMovesForPlayer = Record<
+    BoardId,
+    Record<string, LegalMove[]>
+>;
+export type TurnPhase =
     | "WHITE_PASSIVE"
     | "WHITE_AGGRESSIVE"
     | "BLACK_PASSIVE"

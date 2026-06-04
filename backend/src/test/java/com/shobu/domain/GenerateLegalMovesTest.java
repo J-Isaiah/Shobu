@@ -1,12 +1,10 @@
 package com.shobu.domain;
 
-import com.shobu.GenerateLegalMoves;
 import com.shobu.domain.enums.BoardId;
 import com.shobu.domain.enums.Direction;
 import com.shobu.domain.enums.Stone;
 import com.shobu.domain.moveData.LegalMove;
 import com.shobu.domain.moveData.Move;
-import com.shobu.domain.moveData.PassiveMoveInformation;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

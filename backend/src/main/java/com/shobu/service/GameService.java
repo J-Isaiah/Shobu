@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import com.shobu.GenerateLegalMoves;
+import com.shobu.domain.GenerateLegalMoves;
 import com.shobu.api.errors.apiExceptions.GameNotFoundException;
 import com.shobu.domain.enums.Stone;
 import org.springframework.stereotype.Service;

@@ -1,11 +1,11 @@
 import Board from "../components/mainGame/Board.tsx";
 import "./gameWindow.css";
-import { useParams } from "react-router-dom";
-import {buildMove, getSideToMove, isAggressiveMove, isOwnBoard} from "../utils/game/movePhase.ts";
-import { useEffect, useState } from "react";
+import {useParams} from "react-router-dom";
+import {buildMove, getMoveEnd, getSideToMove, isAggressiveMove, isOwnBoard} from "../utils/game/movePhase.ts";
+import {useEffect, useState} from "react";
 import type {
     BoardCoordinate,
-    GameState,
+    GameState, LegalMovesForPlayer,
     MakeMoveRequest,
     Move,
     Position,
@@ -14,11 +14,11 @@ import {BoardId, type CellSelection,} from "../enums/game.ts";
 
 
 export default function GameWindow() {
-    const [gameState, setGameState] = useState<GameState|null>(null);
+    const [gameState, setGameState] = useState<GameState | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [firstSelection, setFirstSelection] = useState<CellSelection | null>(null);
 
-    const { gameId } = useParams();
+    const {gameId} = useParams();
 
 
     const getGameState = async (): Promise<void> => {
@@ -31,7 +31,6 @@ export default function GameWindow() {
 
         const gameState: GameState = await response.json();
         console.log(gameState);
-
         setGameState(gameState);
     };
 
@@ -44,7 +43,7 @@ export default function GameWindow() {
     }
     const currentGameState = gameState;
 
-    const makeMove = async ({move}: {move: Move}): Promise<void> => {
+    const makeMove = async ({move}: { move: Move }): Promise<void> => {
         const payload: MakeMoveRequest = {
             userId: "e4526351-ff88-4655-b534-c40de2d294b9",
             move: move
@@ -53,7 +52,7 @@ export default function GameWindow() {
 
         const response = await fetch(`/api/game/${gameId}/makeMove`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify(payload),
         });
 
@@ -63,16 +62,40 @@ export default function GameWindow() {
             console.log("Error", errorBody.message)
             return;
         }
+        const gameState = await response.json()
 
-        setGameState(await response.json());
+        setGameState(gameState);
+
         setErrorMessage(null);
+
     };
 
-    function handleCellClick(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): void {
+    function isHighlighted(
+        boardId: BoardId,
+        row: BoardCoordinate,
+        col: BoardCoordinate
+    ): boolean {
+        if (!firstSelection|| !gameState) return false;
+
+        const positionKey = `${firstSelection.position.row},${firstSelection.position.col}`;
+
+        const legalMovesForCell =
+            gameState.legalMovesForPlayer[firstSelection.boardId]?.[positionKey] ?? [];
+
+        return legalMovesForCell.some(legalMove => {
+            const end = getMoveEnd(legalMove.passiveMove);
+
+            return (
+                legalMove.passiveMove.boardId === boardId &&
+                end.row === row &&
+                end.col === col
+            );
+        });
+    }    function handleCellClick(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): void {
         console.log()
         setErrorMessage(null);
 
-        const clickedPosition: Position = { row, col };
+        const clickedPosition: Position = {row, col};
 
         if (!isAggressiveMove(currentGameState.turnPhase)) {
             if (!isOwnBoard(boardId, getSideToMove(currentGameState.turnPhase))) {
@@ -81,15 +104,15 @@ export default function GameWindow() {
             }
 
         }
-            const cellSelection: CellSelection= {
-                boardId,
-                position: {
-                    row: clickedPosition.row,
-                    col: clickedPosition.col,
-                }
-
-
+        const cellSelection: CellSelection = {
+            boardId,
+            position: {
+                row: clickedPosition.row,
+                col: clickedPosition.col,
             }
+
+
+        }
 
         if (firstSelection) {
 
@@ -103,20 +126,18 @@ export default function GameWindow() {
                 firstSelection.boardId, firstSelection.position, cellSelection.position
             )
 
-           void makeMove({move})
+            void makeMove({move})
 
             setFirstSelection(null)
             return
         }
         setFirstSelection(cellSelection)
-        }
-
-
+    }
 
 
     return (
         <div className="gameSpace">
-            <div className="errorMessage">{errorMessage?errorMessage: ""}</div>
+            <div className="errorMessage">{errorMessage ? errorMessage : ""}</div>
             {<div className="errorMessage">{currentGameState.turnPhase}</div>}
 
             <div className="blackSide">
@@ -125,6 +146,7 @@ export default function GameWindow() {
                     board={gameState.updatedGameBoards.BLACK_DARK}
                     boardId={BoardId.BLACK_DARK}
                     onCellClick={handleCellClick}
+                    isHighlighted={isHighlighted}
                 />
 
                 <Board
@@ -132,6 +154,8 @@ export default function GameWindow() {
                     board={gameState.updatedGameBoards.BLACK_LIGHT}
                     boardId={BoardId.BLACK_LIGHT}
                     onCellClick={handleCellClick}
+
+                    isHighlighted={isHighlighted}
                 />
             </div>
 
@@ -141,6 +165,8 @@ export default function GameWindow() {
                     board={gameState.updatedGameBoards.WHITE_LIGHT}
                     boardId={BoardId.WHITE_LIGHT}
                     onCellClick={handleCellClick}
+
+                    isHighlighted={isHighlighted}
                 />
 
                 <Board
@@ -148,6 +174,7 @@ export default function GameWindow() {
                     board={gameState.updatedGameBoards.WHITE_DARK}
                     boardId={BoardId.WHITE_DARK}
                     onCellClick={handleCellClick}
+                    isHighlighted={isHighlighted}
                 />
             </div>
         </div>

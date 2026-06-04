@@ -1,5 +1,5 @@
 import {type BoardId, Direction} from "../../enums/game.ts";
-import type {Move, PlayerColor, Position, TurnPhase} from "../../types/game/MoveTypes.ts";
+import type {BoardCoordinate, Move, PlayerColor, Position, TurnPhase} from "../../types/game/MoveTypes.ts";
 
 export function buildMove(
     boardId: BoardId,
@@ -57,4 +57,46 @@ export function isAggressiveMove(turnPhase: TurnPhase):boolean{
 export function getSideToMove(turnPhase: TurnPhase):PlayerColor{
    return turnPhase.startsWith("WHITE") ? "WHITE": "BLACK"
 
+}
+
+export function getMoveEnd(move: Move): Position {
+    const { row, col } = move.start;
+
+    switch (move.direction) {
+        case "UP":
+            return { row: (row - move.distance) as BoardCoordinate, col };
+
+        case "DOWN":
+            return { row: (row + move.distance) as BoardCoordinate, col };
+
+        case "LEFT":
+            return { row, col: (col - move.distance) as BoardCoordinate };
+
+        case "RIGHT":
+            return { row, col: (col + move.distance) as BoardCoordinate };
+
+        case "UP_LEFT":
+            return {
+                row: (row - move.distance) as BoardCoordinate,
+                col: (col - move.distance) as BoardCoordinate,
+            };
+
+        case "UP_RIGHT":
+            return {
+                row: (row - move.distance) as BoardCoordinate,
+                col: (col + move.distance) as BoardCoordinate,
+            };
+
+        case "DOWN_LEFT":
+            return {
+                row: (row + move.distance) as BoardCoordinate,
+                col: (col - move.distance) as BoardCoordinate,
+            };
+
+        case "DOWN_RIGHT":
+            return {
+                row: (row + move.distance) as BoardCoordinate,
+                col: (col + move.distance) as BoardCoordinate,
+            };
+    }
 }
