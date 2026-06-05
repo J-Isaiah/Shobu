@@ -10,13 +10,16 @@ import type {
     Move,
     Position,
 } from "../types/game/MoveTypes.ts";
-import {BoardId, type CellSelection,} from "../enums/game.ts";
+import {BoardId,} from "../enums/game.ts";
+import type {CellSelection, PlayerMoves} from "../types/game/Cell.ts";
 
 
 export default function GameWindow() {
     const [gameState, setGameState] = useState<GameState | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [playerMoves, setPlayerMoves] = useState<PlayerMoves | null>(null);
     const [firstSelection, setFirstSelection] = useState<CellSelection | null>(null);
+
 
     const {gameId} = useParams();
 
@@ -70,29 +73,36 @@ export default function GameWindow() {
 
     };
 
-    function isHighlighted(
-        boardId: BoardId,
-        row: BoardCoordinate,
-        col: BoardCoordinate
-    ): boolean {
-        if (!firstSelection|| !gameState) return false;
 
-        const positionKey = `${firstSelection.position.row},${firstSelection.position.col}`;
+    function isHighlightedStone(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): boolean {
+        console.log("WORKING")
+        // Highlights passive and aggressive stones
 
-        const legalMovesForCell =
-            gameState.legalMovesForPlayer[firstSelection.boardId]?.[positionKey] ?? [];
+        if (gameState === null) {
+            console.log("GAMESTATE NULL")
+            return false
+        }
+        if (!isAggressiveMove(gameState.turnPhase)) {
+            // if (gameState.legalMovesForPlayer[boardId][`${row},${col}`]) {
+            const legalMovesForBoard = gameState.legalMovesForPlayer[boardId]
+            console.log("boardId", boardId, "boardMoves", legalMovesForBoard);
 
-        return legalMovesForCell.some(legalMove => {
-            const end = getMoveEnd(legalMove.passiveMove);
+            if (legalMovesForBoard && legalMovesForBoard[`${row},${col}`]){
+                return true;
+            }
 
-            return (
-                legalMove.passiveMove.boardId === boardId &&
-                end.row === row &&
-                end.col === col
-            );
-        });
-    }    function handleCellClick(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): void {
-        console.log()
+        }
+        return false
+
+    }
+
+    function isSelectableStone(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): Boolean {
+
+
+    }
+
+
+    function handleCellClick(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): void {
         setErrorMessage(null);
 
         const clickedPosition: Position = {row, col};
@@ -116,9 +126,10 @@ export default function GameWindow() {
 
         if (firstSelection) {
 
+
             if (firstSelection.boardId !== cellSelection.boardId) {
                 setErrorMessage("Second selection should be on first selection board ")
-                setFirstSelection(null)
+                setPlayerMoves(null)
                 return;
             }
 
@@ -127,11 +138,12 @@ export default function GameWindow() {
             )
 
             void makeMove({move})
-
             setFirstSelection(null)
+
             return
         }
         setFirstSelection(cellSelection)
+
     }
 
 
@@ -146,7 +158,7 @@ export default function GameWindow() {
                     board={gameState.updatedGameBoards.BLACK_DARK}
                     boardId={BoardId.BLACK_DARK}
                     onCellClick={handleCellClick}
-                    isHighlighted={isHighlighted}
+                    isHighlightedStone={isHighlightedStone}
                 />
 
                 <Board
@@ -155,7 +167,7 @@ export default function GameWindow() {
                     boardId={BoardId.BLACK_LIGHT}
                     onCellClick={handleCellClick}
 
-                    isHighlighted={isHighlighted}
+                    isHighlightedStone={isHighlightedStone}
                 />
             </div>
 
@@ -166,7 +178,7 @@ export default function GameWindow() {
                     boardId={BoardId.WHITE_LIGHT}
                     onCellClick={handleCellClick}
 
-                    isHighlighted={isHighlighted}
+                    isHighlightedStone={isHighlightedStone}
                 />
 
                 <Board
@@ -174,7 +186,7 @@ export default function GameWindow() {
                     board={gameState.updatedGameBoards.WHITE_DARK}
                     boardId={BoardId.WHITE_DARK}
                     onCellClick={handleCellClick}
-                    isHighlighted={isHighlighted}
+                    isHighlightedStone={isHighlightedStone}
                 />
             </div>
         </div>
