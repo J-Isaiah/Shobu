@@ -1,5 +1,5 @@
 import type {BoardId} from "../../enums/game.ts";
-import type {BoardCoordinate, Move} from "./MoveTypes.ts";
+import type {BoardCoordinate} from "./MoveTypes.ts";
 
 export interface CellUiState {
     isSelectable: boolean;

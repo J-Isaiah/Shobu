@@ -12,12 +12,13 @@ function toBoardCoordinate(value: number): BoardCoordinate {
     return value as BoardCoordinate;
 }
 
-export default function Board({color, board, boardId, onCellClick, isHighlightedStone}: {
+export default function Board({color, board, boardId, onCellClick, isHighlightedStone, isHighlightedCell, }: {
     color: BoardColor,
     board: Board,
     boardId: BoardId,
     onCellClick: OnCellClick,
     isHighlightedStone: (boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate) => boolean;
+    isHighlightedCell:(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate) => boolean
 }) {
 
     return (
@@ -31,6 +32,7 @@ export default function Board({color, board, boardId, onCellClick, isHighlighted
                         boardId={boardId}
                         position={{row: toBoardCoordinate(rowIndex), col: toBoardCoordinate(colIndex)}}
                         isHighlightedStone={isHighlightedStone(boardId, toBoardCoordinate(rowIndex), toBoardCoordinate(colIndex))}
+                        isHighlightedCell={isHighlightedCell(boardId, toBoardCoordinate(rowIndex), toBoardCoordinate(colIndex))}
                     />
                 ))
             )}

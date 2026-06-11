@@ -11,3 +11,5 @@
 .stone--WHITE{
     background: #eee;
 }
+
+.highlighted-stone {background-color: red}
