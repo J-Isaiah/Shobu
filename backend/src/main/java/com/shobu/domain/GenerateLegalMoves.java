@@ -16,16 +16,26 @@ import java.util.Map;
 public class GenerateLegalMoves {
     private final Game game;
     private final Stone sideToMove;
+    private Move returnedPassiveMove;
 
     public GenerateLegalMoves(Game game) {
         this.game = game;
         this.sideToMove = game.getSideToMove();
+        this.returnedPassiveMove= null;
     }
 
     public List<LegalMove> generateLegalMoves() {
         List<LegalMove> legalMoves = new ArrayList<>();
+        List<PassiveMoveInformation> allPassiveMoves = generateFlatPassiveMoves();
 
-        for (PassiveMoveInformation passiveMoveInformation : generateFlatPassiveMoves()) {
+        if (game.getTurnPhase().isAggressive()){
+          allPassiveMoves.add(new PassiveMoveInformation(game.getPendingPassiveMove().boardId(), game.getPendingPassiveMove(), game));
+          this.returnedPassiveMove= game.getPendingPassiveMove();
+        }
+
+
+
+        for (PassiveMoveInformation passiveMoveInformation : allPassiveMoves) {
             List<Move> aggressiveMoves = generateAggressiveMoves(passiveMoveInformation);
 
             if (!aggressiveMoves.isEmpty()) {
@@ -120,5 +130,9 @@ public class GenerateLegalMoves {
         }
 
         return movesByBoard;
+    }
+
+    public Move getReturnedPassiveMove() {
+        return returnedPassiveMove;
     }
 }

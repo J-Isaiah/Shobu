@@ -1,15 +1,9 @@
 import Board from "../components/mainGame/Board.tsx";
 import "./gameWindow.css";
 import {useParams} from "react-router-dom";
-import {buildMove, getMoveEnd, getSideToMove, isAggressiveMove, isOwnBoard} from "../utils/game/movePhase.ts";
+import {buildMove, getSideToMove, isAggressiveMove, isOwnBoard} from "../utils/game/movePhase.ts";
 import {useEffect, useState} from "react";
-import type {
-    BoardCoordinate,
-    GameState, LegalMovesForPlayer,
-    MakeMoveRequest,
-    Move,
-    Position,
-} from "../types/game/MoveTypes.ts";
+import type {BoardCoordinate, GameState, MakeMoveRequest, Move, Position,} from "../types/game/MoveTypes.ts";
 import {BoardId,} from "../enums/game.ts";
 import type {CellSelection, PlayerMoves} from "../types/game/Cell.ts";
 
@@ -33,7 +27,6 @@ export default function GameWindow() {
         }
 
         const gameState: GameState = await response.json();
-        console.log(gameState);
         setGameState(gameState);
     };
 
@@ -62,9 +55,9 @@ export default function GameWindow() {
         if (!response.ok) {
             const errorBody = await response.json();
             setErrorMessage(`Move failed: ${errorBody.message}`);
-            console.log("Error", errorBody.message)
             return;
         }
+        console.log(await response)
         const gameState = await response.json()
 
         setGameState(gameState);
@@ -75,24 +68,36 @@ export default function GameWindow() {
 
 
     function isHighlightedStone(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): boolean {
-        console.log("WORKING")
         // Highlights passive and aggressive stones
 
         if (gameState === null) {
-            console.log("GAMESTATE NULL")
             return false
         }
         if (!isAggressiveMove(gameState.turnPhase)) {
             // if (gameState.legalMovesForPlayer[boardId][`${row},${col}`]) {
             const legalMovesForBoard = gameState.legalMovesForPlayer[boardId]
-            console.log("boardId", boardId, "boardMoves", legalMovesForBoard);
 
-            if (legalMovesForBoard && legalMovesForBoard[`${row},${col}`]){
+            if (legalMovesForBoard && legalMovesForBoard[`${row},${col}`]) {
                 return true;
             }
 
+
+        }
+        if (gameState.pendingPassiveMove ==  null){
+            return false
+        }
+
+        const allAggressiveMoves = gameState.legalMovesForPlayer[gameState.pendingPassiveMove.boardId][`${gameState.pendingPassiveMove.start.row},${gameState.pendingPassiveMove.start.col}`][0]
+
+        for (const  aggressiveMove of allAggressiveMoves.aggressiveMoves){
+            if (aggressiveMove.start.row == row && aggressiveMove.start.col == col && aggressiveMove.boardId == boardId)
+            {return true}
         }
         return false
+
+
+
+
 
     }
 

@@ -11,7 +11,8 @@ import com.shobu.domain.enums.BoardId;
 import com.shobu.domain.enums.Stone;
 import com.shobu.domain.enums.TurnPhase;
 import com.shobu.domain.moveData.LegalMove;
+import com.shobu.domain.moveData.Move;
 
-public record GameState(UUID gameId, TurnPhase turnPhase, Map<BoardId, Board> updatedGameBoards, Stone winner, EnumMap<BoardId, Map<String, List<LegalMove>>> legalMovesForPlayer) {
+public record GameState(UUID gameId, TurnPhase turnPhase, Map<BoardId, Board> updatedGameBoards, Stone winner, EnumMap<BoardId, Map<String, List<LegalMove>>> legalMovesForPlayer, Move pendingPassiveMove) {
 
 }

@@ -43,7 +43,7 @@ public class GameService {
         // TODO: Return legal moves
         games.put(gameId, updatedGame);
 
-        return new GameState(gameId, updatedGame.getTurnPhase(), updatedGame.getBoards(), updatedGame.getWinner(), generator.generateLegalMovesByBoardAndPosition());
+        return new GameState(gameId, updatedGame.getTurnPhase(), updatedGame.getBoards(), updatedGame.getWinner(), generator.generateLegalMovesByBoardAndPosition(), generator.getReturnedPassiveMove());
 
     }
 
@@ -55,7 +55,7 @@ public class GameService {
         }
 
         // TODO: Return legal moves
-        return new GameState(gameId, game.getTurnPhase(), game.getBoards(), game.getWinner(), generator.generateLegalMovesByBoardAndPosition());
+        return new GameState(gameId, game.getTurnPhase(), game.getBoards(), game.getWinner(), generator.generateLegalMovesByBoardAndPosition(),generator.getReturnedPassiveMove() );
 
     }
 }

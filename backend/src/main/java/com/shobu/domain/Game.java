@@ -153,4 +153,7 @@ public class Game {
             return null;
         }
     }
+    public Move getPendingPassiveMove() {
+        return pendingPassiveMove;
+    }
 }

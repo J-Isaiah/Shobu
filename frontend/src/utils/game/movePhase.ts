@@ -50,7 +50,6 @@ export function isOwnBoard(boardId: BoardId, sideToMove: PlayerColor): boolean {
 }
 
 export function isAggressiveMove(turnPhase: TurnPhase):boolean{
-    console.log(turnPhase)
     return turnPhase.includes("AGGRESSIVE")
 }
 

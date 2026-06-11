@@ -29,6 +29,7 @@ export interface GameState {
     updatedGameBoards: Record<BoardId, Board>;
     winner: "WHITE" | "BLACK" | null;
     legalMovesForPlayer: LegalMovesForPlayer;
+    pendingPassiveMove: Move
 }
 
 export interface Board {
