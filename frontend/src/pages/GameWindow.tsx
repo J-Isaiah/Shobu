@@ -106,15 +106,19 @@ export default function GameWindow() {
 
     }
 
-    function isHighlightedCell(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate) : boolean {
-        if (firstSelection?.boardId==boardId && firstSelection.position.row == row && firstSelection.position.col == col) {
+    function isHighlightedCell(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): boolean {
+        if (firstSelection?.boardId == boardId && firstSelection.position.row == row && firstSelection.position.col == col) {
             return true
         }
         return false
     }
 
 
-    function handleCellClick(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): void {
+    async function handleCellClick(
+        boardId: BoardId,
+        row: BoardCoordinate,
+        col: BoardCoordinate
+    ): Promise<void> {
         setErrorMessage(null);
 
         const clickedPosition: Position = {row, col};
@@ -124,38 +128,32 @@ export default function GameWindow() {
                 setErrorMessage("Passive move must start on your own board.");
                 return;
             }
-
         }
+
         const cellSelection: CellSelection = {
             boardId,
-            position: {
-                row: clickedPosition.row,
-                col: clickedPosition.col,
-            }
-
-
-        }
+            position: clickedPosition,
+        };
 
         if (firstSelection) {
-
-
             if (firstSelection.boardId !== cellSelection.boardId) {
-                setErrorMessage("Second selection should be on first selection board ")
-                setPlayerMoves(null)
+                setErrorMessage("Second selection should be on first selection board");
+                setPlayerMoves(null);
                 return;
             }
 
             const move = buildMove(
-                firstSelection.boardId, firstSelection.position, cellSelection.position
-            )
+                firstSelection.boardId,
+                firstSelection.position,
+                cellSelection.position
+            );
 
-            void makeMove({move})
-            setFirstSelection(null)
-
-            return
+            await makeMove({move});
+            setFirstSelection(null);
+            return;
         }
-        setFirstSelection(cellSelection)
 
+        setFirstSelection(cellSelection);
     }
 
 
