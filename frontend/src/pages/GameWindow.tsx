@@ -178,6 +178,7 @@ export default function GameWindow() {
         if (!isAggressiveMove(currentGameState.turnPhase)) {
             if (!isOwnBoard(boardId, getSideToMove(currentGameState.turnPhase))) {
                 setErrorMessage("Passive move must start on your own board.");
+                setFirstSelection(null)
                 return;
             }
         }
@@ -191,6 +192,7 @@ export default function GameWindow() {
             if (firstSelection.boardId !== cellSelection.boardId) {
                 setErrorMessage("Second selection should be on first selection board");
                 setPlayerMoves(null);
+                setFirstSelection(null)
                 return;
             }
 
