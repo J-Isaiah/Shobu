@@ -1,7 +1,7 @@
 import Board from "../components/mainGame/Board.tsx";
 import "./gameWindow.css";
 import {useParams} from "react-router-dom";
-import {buildMove, getSideToMove, isAggressiveMove, isOwnBoard} from "../utils/game/movePhase.ts";
+import {buildMove, getMoveEnd, getSideToMove, isAggressiveMove, isOwnBoard} from "../utils/game/movePhase.ts";
 import {useEffect, useState} from "react";
 import type {BoardCoordinate, GameState, MakeMoveRequest, Move, Position,} from "../types/game/MoveTypes.ts";
 import {BoardId,} from "../enums/game.ts";
@@ -67,7 +67,7 @@ export default function GameWindow() {
     };
 
 
-    function isHighlightedStone(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): boolean {
+    function isMovableStone(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): boolean {
         // Highlights passive and aggressive stones
 
         if (firstSelection) {
@@ -106,11 +106,63 @@ export default function GameWindow() {
 
     }
 
-    function isHighlightedCell(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): boolean {
-        if (firstSelection?.boardId == boardId && firstSelection.position.row == row && firstSelection.position.col == col) {
-            return true
+    function isSelectedStone(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): boolean {
+        // Highlights Selected Stone
+        return firstSelection?.boardId == boardId && firstSelection.position.row == row && firstSelection.position.col == col;
+
+    }
+
+    function isAvailableCellToMove(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate) {
+
+        if ((firstSelection?.boardId != boardId) || !gameState) {
+            return false
+        }
+        console.log(gameState)
+
+
+        if (isAggressiveMove(gameState.turnPhase)) {
+
+            const legalMovesForBoard = gameState.legalMovesForPlayer[gameState.pendingPassiveMove.boardId][`${gameState.pendingPassiveMove.start.row},${gameState.pendingPassiveMove.start.col}`]
+
+            if (!legalMovesForBoard) {
+                return false
+            }
+            // when aggressive move
+
+            for (const moves of legalMovesForBoard) {
+                for (const move of moves.aggressiveMoves) {
+                    if (move.direction != gameState.pendingPassiveMove.direction || move.start.row != firstSelection.position.row || move.start.col != firstSelection.position.col) {
+                        continue
+                    }
+                    const endPosition = getMoveEnd(move)
+                    if (endPosition.row == row && endPosition.col == col) {
+
+                        return true
+
+                    }
+                }
+
+
+            }
+        }
+        if (!isAggressiveMove(gameState.turnPhase)) {
+
+            const passiveMoves = gameState.legalMovesForPlayer[boardId]
+
+            const allMoves = passiveMoves[`${firstSelection.position.row},${firstSelection.position.col}`]
+
+
+            for (const move of allMoves) {
+
+                const endPosition = getMoveEnd(move.passiveMove)
+                if (endPosition.row == row && endPosition.col == col) {
+                    return true
+                }
+            }
         }
         return false
+
+
     }
 
 
@@ -168,8 +220,9 @@ export default function GameWindow() {
                     board={gameState.updatedGameBoards.BLACK_DARK}
                     boardId={BoardId.BLACK_DARK}
                     onCellClick={handleCellClick}
-                    isHighlightedStone={isHighlightedStone}
-                    isHighlightedCell={isHighlightedCell}
+                    isHighlightedStone={isMovableStone}
+                    isHighlightedCell={isSelectedStone}
+                    isAvailableCellToMove={isAvailableCellToMove}
                 />
 
                 <Board
@@ -178,8 +231,9 @@ export default function GameWindow() {
                     boardId={BoardId.BLACK_LIGHT}
                     onCellClick={handleCellClick}
 
-                    isHighlightedCell={isHighlightedCell}
-                    isHighlightedStone={isHighlightedStone}
+                    isAvailableCellToMove={isAvailableCellToMove}
+                    isHighlightedCell={isSelectedStone}
+                    isHighlightedStone={isMovableStone}
                 />
             </div>
 
@@ -190,8 +244,9 @@ export default function GameWindow() {
                     boardId={BoardId.WHITE_LIGHT}
                     onCellClick={handleCellClick}
 
-                    isHighlightedCell={isHighlightedCell}
-                    isHighlightedStone={isHighlightedStone}
+                    isAvailableCellToMove={isAvailableCellToMove}
+                    isHighlightedCell={isSelectedStone}
+                    isHighlightedStone={isMovableStone}
                 />
 
                 <Board
@@ -199,8 +254,9 @@ export default function GameWindow() {
                     board={gameState.updatedGameBoards.WHITE_DARK}
                     boardId={BoardId.WHITE_DARK}
                     onCellClick={handleCellClick}
-                    isHighlightedStone={isHighlightedStone}
-                    isHighlightedCell={isHighlightedCell}
+                    isHighlightedStone={isMovableStone}
+                    isHighlightedCell={isSelectedStone}
+                    isAvailableCellToMove={isAvailableCellToMove}
                 />
             </div>
         </div>
