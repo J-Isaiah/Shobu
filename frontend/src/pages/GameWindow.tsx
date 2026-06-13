@@ -2,10 +2,12 @@ import Board from "../components/mainGame/Board.tsx";
 import "./gameWindow.css";
 import {useParams} from "react-router-dom";
 import {buildMove, getMoveEnd, getSideToMove, isAggressiveMove, isOwnBoard} from "../utils/game/movePhase.ts";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import type {BoardCoordinate, GameState, MakeMoveRequest, Move, Position,} from "../types/game/MoveTypes.ts";
 import {BoardId,} from "../enums/game.ts";
 import type {CellSelection, PlayerMoves} from "../types/game/Cell.ts";
+import {createStompClient} from "../webhooks/stompClient.ts";
+import type {Client} from "@stomp/stompjs";
 
 
 export default function GameWindow() {
@@ -13,7 +15,9 @@ export default function GameWindow() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [playerMoves, setPlayerMoves] = useState<PlayerMoves | null>(null);
     const [firstSelection, setFirstSelection] = useState<CellSelection | null>(null);
+    const [isPendingMove, setIsPendingMove] = useState(false)
 
+    const clientRef = useRef<Client | null>(null);
 
     const {gameId} = useParams();
 
@@ -31,7 +35,26 @@ export default function GameWindow() {
     };
 
     useEffect(() => {
+        clientRef.current = createStompClient();
+
+        clientRef.current.onConnect = () => {
+
+            clientRef.current?.subscribe(`/topic/game/${gameId}`, (message) => {
+                console.log(message)
+                const updatedGameState =
+                    JSON.parse(message.body);
+
+                setGameState(updatedGameState);
+                setIsPendingMove(false)
+            });
+        };
+
+        clientRef.current.activate();
         void getGameState();
+
+        return () => {
+            clientRef.current?.deactivate()
+        }
     }, [gameId]);
 
     if (gameState === null) {
@@ -46,21 +69,26 @@ export default function GameWindow() {
 
         };
 
-        const response = await fetch(`/api/game/${gameId}/makeMove`, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
+        // const response = await fetch(`/api/game/${gameId}/makeMove`, {
+        //     method: "POST",
+        //     headers: {"Content-Type": "application/json"},
+        //     body: JSON.stringify(payload),
+        // });
+
+
+        clientRef.current?.publish({
+            destination: `/app/game/${gameId}/makeMove`,
             body: JSON.stringify(payload),
         });
+        setIsPendingMove(true)
+        // if (!response.ok) {
+        //     const errorBody = await response.json();
+        //     setErrorMessage(`Move failed: ${errorBody.message}`);
+        //     return;
+        // }
+        // const gameState = await response.json()
 
-        if (!response.ok) {
-            const errorBody = await response.json();
-            setErrorMessage(`Move failed: ${errorBody.message}`);
-            return;
-        }
-        console.log(await response)
-        const gameState = await response.json()
-
-        setGameState(gameState);
+        // setGameState(gameState);
 
         setErrorMessage(null);
 
@@ -70,7 +98,7 @@ export default function GameWindow() {
     function isMovableStone(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): boolean {
         // Highlights passive and aggressive stones
 
-        if (firstSelection) {
+        if (firstSelection || isPendingMove) {
             return false
         }
 
@@ -117,7 +145,6 @@ export default function GameWindow() {
         if ((firstSelection?.boardId != boardId) || !gameState) {
             return false
         }
-        console.log(gameState)
 
 
         if (isAggressiveMove(gameState.turnPhase)) {
