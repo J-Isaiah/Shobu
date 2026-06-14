@@ -6,7 +6,7 @@ import {useEffect, useRef, useState} from "react";
 import type {BoardCoordinate, GameState, MakeMoveRequest, Move, Position,} from "../types/game/MoveTypes.ts";
 import {BoardId,} from "../enums/game.ts";
 import type {CellSelection, PlayerMoves} from "../types/game/Cell.ts";
-import {createStompClient} from "../webhooks/stompClient.ts";
+import {createStompClient} from "../utils/stompClient.ts";
 import type {Client} from "@stomp/stompjs";
 
 
