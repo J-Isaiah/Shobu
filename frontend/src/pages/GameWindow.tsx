@@ -2,97 +2,31 @@ import Board from "../components/mainGame/Board.tsx";
 import "./gameWindow.css";
 import {useParams} from "react-router-dom";
 import {buildMove, getMoveEnd, getSideToMove, isAggressiveMove, isOwnBoard} from "../utils/game/movePhase.ts";
-import {useEffect, useRef, useState} from "react";
-import type {BoardCoordinate, GameState, MakeMoveRequest, Move, Position,} from "../types/game/MoveTypes.ts";
+import { useState} from "react";
+import type {BoardCoordinate,  Position,} from "../types/game/MoveTypes.ts";
 import {BoardId,} from "../enums/game.ts";
 import type {CellSelection, PlayerMoves} from "../types/game/Cell.ts";
-import {createStompClient} from "../utils/stompClient.ts";
-import type {Client} from "@stomp/stompjs";
+import {useGameConnection} from "../hooks/game/useGameConnection.ts";
 
 
 export default function GameWindow() {
-    const [gameState, setGameState] = useState<GameState | null>(null);
+    const {gameId} = useParams();
+
+    const {makeMove, gameState, isPendingMove} = useGameConnection(gameId)
+
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [playerMoves, setPlayerMoves] = useState<PlayerMoves | null>(null);
     const [firstSelection, setFirstSelection] = useState<CellSelection | null>(null);
-    const [isPendingMove, setIsPendingMove] = useState(false)
-
-    const clientRef = useRef<Client | null>(null);
-
-    const {gameId} = useParams();
 
 
-    const getGameState = async (): Promise<void> => {
-        const response = await fetch(`/api/game/${gameId}/getGameState`);
 
-        if (!response.ok) {
-            setErrorMessage(`Failed to load game: ${response.status}`);
-            return;
-        }
 
-        const gameState: GameState = await response.json();
-        setGameState(gameState);
-    };
-
-    useEffect(() => {
-        clientRef.current = createStompClient();
-
-        clientRef.current.onConnect = () => {
-
-            clientRef.current?.subscribe(`/topic/game/${gameId}`, (message) => {
-                console.log(message)
-                const updatedGameState =
-                    JSON.parse(message.body);
-
-                setGameState(updatedGameState);
-                setIsPendingMove(false)
-            });
-        };
-
-        clientRef.current.activate();
-        void getGameState();
-
-        return () => {
-            clientRef.current?.deactivate()
-        }
-    }, [gameId]);
 
     if (gameState === null) {
         return <div>Loading game...</div>;
     }
     const currentGameState = gameState;
 
-    const makeMove = async ({move}: { move: Move }): Promise<void> => {
-        const payload: MakeMoveRequest = {
-            userId: "e4526351-ff88-4655-b534-c40de2d294b9",
-            move: move
-
-        };
-
-        // const response = await fetch(`/api/game/${gameId}/makeMove`, {
-        //     method: "POST",
-        //     headers: {"Content-Type": "application/json"},
-        //     body: JSON.stringify(payload),
-        // });
-
-
-        clientRef.current?.publish({
-            destination: `/app/game/${gameId}/makeMove`,
-            body: JSON.stringify(payload),
-        });
-        setIsPendingMove(true)
-        // if (!response.ok) {
-        //     const errorBody = await response.json();
-        //     setErrorMessage(`Move failed: ${errorBody.message}`);
-        //     return;
-        // }
-        // const gameState = await response.json()
-
-        // setGameState(gameState);
-
-        setErrorMessage(null);
-
-    };
 
 
     function isMovableStone(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): boolean {
