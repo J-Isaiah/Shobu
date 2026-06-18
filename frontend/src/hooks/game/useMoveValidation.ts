@@ -1,9 +1,8 @@
 import {useState} from "react";
-import type {CellSelection, PlayerMoves} from "../../types/game/Cell.ts";
+import type {CellSelection} from "../../types/game/Cell.ts";
 import {BoardId} from "../../enums/game.ts";
 import type {BoardCoordinate, GameState, Move, Position} from "../../types/game/MoveTypes.ts";
 import {buildMove, getSideToMove, isAggressiveMove, isOwnBoard} from "../../utils/game/movePhase.ts";
-import * as React from "react";
 
 
 interface useMoveControllerParams {
@@ -14,7 +13,6 @@ interface useMoveControllerParams {
 export function useMoveController({gameState, makeMove,  }: useMoveControllerParams) {
 
     const [uiError, setUiError] = useState<string | null>(null)
-    const [playerMoves, setPlayerMoves] = useState<PlayerMoves | null>(null);
     const [firstSelection, setFirstSelection] = useState<CellSelection | null>(null)
 
 
@@ -29,6 +27,8 @@ export function useMoveController({gameState, makeMove,  }: useMoveControllerPar
         setUiError(null);
 
         const clickedPosition: Position = {row, col};
+
+        if (!currentGameState) return
 
         if (!isAggressiveMove(currentGameState.turnPhase)) {
             if (!isOwnBoard(boardId, getSideToMove(currentGameState.turnPhase))) {
@@ -46,7 +46,6 @@ export function useMoveController({gameState, makeMove,  }: useMoveControllerPar
         if (firstSelection) {
             if (firstSelection.boardId !== cellSelection.boardId) {
                 setUiError("Second selection should be on first selection board");
-                setPlayerMoves(null);
                 setFirstSelection(null)
                 return;
             }

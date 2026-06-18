@@ -5,8 +5,6 @@ import {BoardId,} from "../enums/game.ts";
 import {useGameConnection} from "../hooks/game/useGameConnection.ts";
 import {useMoveHighlighting} from "../hooks/game/useMoveHighlighting.ts";
 import {useMoveController} from "../hooks/game/useMoveValidation.ts";
-import {useState} from "react";
-import type {PlayerMoves} from "../types/game/Cell.ts";
 
 
 export default function GameWindow() {
@@ -40,6 +38,8 @@ export default function GameWindow() {
     return (
         <div className="gameSpace">
             <div className="errorMessage">{uiError ? uiError : ""}</div>
+
+            <div className="errorMessage">{networkError? networkError: ""}</div>
             {<div className="errorMessage">{gameState.turnPhase}</div>}
 
             <div className="blackSide">
