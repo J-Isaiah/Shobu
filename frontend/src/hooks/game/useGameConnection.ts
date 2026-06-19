@@ -1,16 +1,16 @@
-import { useEffect, useRef, useState } from "react";
-import { createStompClient } from "../../utils/stompClient.ts";
-import type { Client } from "@stomp/stompjs";
-import type { GameState, MakeMoveRequest, Move } from "../../types/game/MoveTypes.ts";
+import {useEffect, useRef, useState} from "react";
+import {createStompClient} from "../../utils/stompClient.ts";
+import type {Client} from "@stomp/stompjs";
+import type {GameState, MakeMoveRequest, Move} from "../../types/game/MoveTypes.ts";
 
 async function fetchGameState(gameId: string): Promise<GameState> {
     const response = await fetch(`/api/game/${gameId}/getGameState`);
 
+
     if (!response.ok) {
         throw new Error(`Failed to load game: ${response.status}`);
     }
-
-    return await response.json();
+    return await response.json()
 }
 
 export function useGameConnection(gameId: string | undefined) {

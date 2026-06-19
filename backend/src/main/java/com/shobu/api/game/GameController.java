@@ -2,10 +2,10 @@ package com.shobu.api.game;
 
 import java.util.UUID;
 
+import com.shobu.api.dto.response.JoinGameResponse;
 import org.springframework.web.bind.annotation.*;
 
 import com.shobu.api.dto.request.MakeMoveRequest;
-import com.shobu.api.dto.request.StartGameRequest;
 import com.shobu.api.dto.response.GameState;
 import com.shobu.api.dto.response.StartGameResponse;
 import com.shobu.service.GameService;
@@ -20,8 +20,8 @@ public class GameController {
     }
 
     @PostMapping("/startGame")
-    public StartGameResponse startGame(@RequestBody StartGameRequest request) {
-        return gameService.startGame(request);
+    public StartGameResponse startGame() {
+        return gameService.startGame();
 
     }
 
@@ -29,9 +29,15 @@ public class GameController {
     public GameState makeMove(@PathVariable UUID gameId, @RequestBody MakeMoveRequest request) {
         return gameService.makeMove(gameId, request);
     }
+    @PostMapping("{gameId}/joinGame")
+    public JoinGameResponse joinGame(@PathVariable UUID gameId){
+        return gameService.joinGame(gameId);
+
+    }
 
     @GetMapping("/{gameId}/getGameState")
     public GameState getGameState(@PathVariable UUID gameId) {
         return gameService.getGameState(gameId);
     }
+
 }
