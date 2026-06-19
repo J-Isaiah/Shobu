@@ -8,8 +8,10 @@ import java.util.UUID;
 import com.shobu.domain.Game;
 import com.shobu.domain.Position;
 import com.shobu.domain.enums.BoardId;
+import com.shobu.domain.enums.Stone;
 import com.shobu.domain.moveData.LegalMove;
 
-public record StartGameResponse(UUID playerId,UUID gameId, Game game, EnumMap<BoardId, Map<String, List<LegalMove>>> legalMovesForPlayer ) {
+public record StartGameResponse(UUID playerId, UUID gameId, Game game, EnumMap<BoardId, Map<String, List<LegalMove>>> legalMovesForPlayer ,
+                                Stone playerColor) {
 
 }

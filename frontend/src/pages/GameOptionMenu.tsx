@@ -1,7 +1,13 @@
 import {useNavigate} from "react-router-dom";
+import {useState} from "react";
+
+function extractGameId(input: string): string {
+    return input.split("/").pop() ?? "";
+}
 
 export default function GameOptionMenu() {
     const navigate = useNavigate();
+    const [joinString, setJoinString] = useState("")
 
     const startGame = async () => {
         const payload = {
@@ -23,12 +29,47 @@ export default function GameOptionMenu() {
             console.log(error);
         }
 
-        const {gameId, playerId} = await response.json();
+        const {gameId, playerId, playerColor} = await response.json();
         localStorage.setItem("playerId", playerId);
 
+        localStorage.setItem("playerColor", playerColor);
 
         navigate(`/game/${gameId}`);
     };
 
-    return <button onClick={startGame}>Start Game</button>;
+    const joinGame = async () => {
+        const gameId = extractGameId(joinString)
+
+        const response = await fetch(`/api/game/${gameId}/joinGame`,{
+            method: "POST",
+            headers: {"Ccontent-Type": "application/json"}
+        })
+
+        const {playerId, playerColor}= await response.json();
+        localStorage.setItem("playerId", playerId)
+        localStorage.setItem("playerColor", playerColor)
+        navigate(`/game/${gameId}`)
+
+
+
+    }
+    return <>
+        <div>
+            <div>
+                <button onClick={startGame}>Start Game</button>
+            </div>
+            <div>
+                <input type="text"
+                       value={joinString}
+                       onChange={(e) => {
+                           setJoinString(e.target.value)
+                       }}
+                placeholder={"Game URL"}/>
+            </div>
+            <div>
+                <button onClick={joinGame}>Join Game</button>
+            </div>
+        </div>
+    </>
+
 }

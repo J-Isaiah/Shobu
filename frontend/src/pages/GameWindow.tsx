@@ -39,7 +39,7 @@ export default function GameWindow() {
         <div className="gameSpace">
             <div className="errorMessage">{uiError ? uiError : ""}</div>
 
-            <div className="errorMessage">{networkError? networkError: ""}</div>
+            <div className="errorMessage">{networkError ? networkError : ""}</div>
             {<div className="errorMessage">{gameState.turnPhase}</div>}
 
             <div className="blackSide">

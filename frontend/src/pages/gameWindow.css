@@ -7,7 +7,7 @@
 }
 
 .blackSide,
-.whiteSide{
+.whiteSide {
     display: flex;
     gap: 2rem;
 }

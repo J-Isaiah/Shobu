@@ -31,7 +31,7 @@ public class GameService {
 
 
         games.put(id, gameSession);
-        return new StartGameResponse(whitePlayerId, id, game, generator.generateLegalMovesByBoardAndPosition());
+        return new StartGameResponse(whitePlayerId, id, game, generator.generateLegalMovesByBoardAndPosition(), Stone.WHITE);
     }
 
     public GameState makeMove(UUID gameId, MakeMoveRequest request) {
@@ -60,7 +60,6 @@ public class GameService {
         if (game == null) {
             throw new GameNotFoundException(gameId);
         }
-        // TODO: Return legal moves
         return new GameState(gameId, game.getTurnPhase(), game.getBoards(), game.getWinner(), generator.generateLegalMovesByBoardAndPosition(), generator.getReturnedPassiveMove());
     }
 
@@ -80,7 +79,7 @@ public class GameService {
 
         games.put(gameId, gameSession);
 
-        return new JoinGameResponse(gameId, gameSession.getBlackPlayerId(), buildGameState(gameId, game));
+        return new JoinGameResponse(gameId, gameSession.getBlackPlayerId(), buildGameState(gameId, game), Stone.BLACK);
     }
 
     private GameState buildGameState(UUID gameId, Game game) {
