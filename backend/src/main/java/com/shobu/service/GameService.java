@@ -1,21 +1,21 @@
 package com.shobu.service;
 
+import com.shobu.api.dto.request.MakeMoveRequest;
+import com.shobu.api.dto.response.GameState;
+import com.shobu.api.dto.response.JoinGameResponse;
+import com.shobu.api.dto.response.StartGameResponse;
+import com.shobu.api.errors.apiExceptions.GameFullException;
+import com.shobu.api.errors.apiExceptions.GameNotFoundException;
+import com.shobu.domain.Game;
+import com.shobu.domain.GameSession;
+import com.shobu.domain.GenerateLegalMoves;
+import com.shobu.domain.enums.Stone;
+import com.shobu.domain.errors.InvalidMoveException;
+import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import com.shobu.api.dto.response.JoinGameResponse;
-import com.shobu.api.errors.apiExceptions.GameFullException;
-import com.shobu.domain.GameSession;
-import com.shobu.domain.GenerateLegalMoves;
-import com.shobu.api.errors.apiExceptions.GameNotFoundException;
-import com.shobu.domain.enums.Stone;
-import org.springframework.stereotype.Service;
-
-import com.shobu.api.dto.request.MakeMoveRequest;
-import com.shobu.api.dto.response.GameState;
-import com.shobu.api.dto.response.StartGameResponse;
-import com.shobu.domain.Game;
 
 @Service
 public class GameService {
@@ -41,6 +41,14 @@ public class GameService {
         }
 
         Game game = gameSession.getGame();
+        Stone sideToMove = game.getSideToMove();
+
+        UUID expectedPlayerId = sideToMove == Stone.WHITE ? gameSession.getWhitePlayerId() : gameSession.getBlackPlayerId();
+
+        if (!expectedPlayerId.equals(request.userId())) {
+            throw new InvalidMoveException("It is not your turn");
+        }
+
 
         Game updatedGame = game.makeMove(request.move());
         GenerateLegalMoves generator = new GenerateLegalMoves(updatedGame);
@@ -89,4 +97,5 @@ public class GameService {
         return new GameState(gameId, game.getTurnPhase(), game.getBoards(), game.getWinner(), generator.generateLegalMovesByBoardAndPosition(), generator.getReturnedPassiveMove());
 
     }
+
 }

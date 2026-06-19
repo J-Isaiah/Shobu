@@ -1,8 +1,11 @@
+import type { Dispatch, SetStateAction } from "react";
 import {BoardId} from "../../enums/game.ts";
-import type {BoardCoordinate} from "../../types/game/MoveTypes.ts";
-import {getMoveEnd, isAggressiveMove} from "../../utils/game/movePhase.ts";
+import type {CellSelection} from "../../types/game/Cell.ts";
+import type {BoardCoordinate, GameState} from "../../types/game/MoveTypes.ts";
+import {getMoveEnd, getSideToMove, isAggressiveMove} from "../../utils/game/movePhase.ts";
 
-export function useMoveHighlighting(setUiError, gameState, isPendingMove, firstSelection) {
+export function useMoveHighlighting(setUiError: Dispatch<SetStateAction<string | null>>, gameState: GameState | null, isPendingMove: boolean, firstSelection: CellSelection | null) {
+    const playerColor = localStorage.getItem("playerColor")
 
 
     function isMovableStone(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): boolean {
@@ -15,7 +18,10 @@ export function useMoveHighlighting(setUiError, gameState, isPendingMove, firstS
         if (gameState === null) {
             return false
         }
-        if (!isAggressiveMove(gameState.turnPhase)) {
+        if (playerColor != getSideToMove(gameState.turnPhase)){
+            return false
+        }
+        if (!isAggressiveMove(gameState.turnPhase) ) {
             // if (gameState.legalMovesForPlayer[boardId][`${row},${col}`]) {
             const legalMovesForBoard = gameState.legalMovesForPlayer[boardId]
 
@@ -46,11 +52,17 @@ export function useMoveHighlighting(setUiError, gameState, isPendingMove, firstS
 
     function isSelectedStone(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): boolean {
         // Highlights Selected Stone
+        if (playerColor != getSideToMove(gameState.turnPhase)){
+            return false
+        }
         return firstSelection?.boardId == boardId && firstSelection.position.row == row && firstSelection.position.col == col;
 
     }
 
     function isAvailableCellToMove(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate) {
+        if (playerColor != getSideToMove(gameState.turnPhase)){
+            return false
+        }
 
         if ((firstSelection?.boardId != boardId) || !gameState) {
             return false

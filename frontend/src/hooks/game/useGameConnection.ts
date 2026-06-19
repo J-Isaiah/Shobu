@@ -16,7 +16,8 @@ async function fetchGameState(gameId: string): Promise<GameState> {
 export function useGameConnection(gameId: string | undefined) {
     const [gameState, setGameState] = useState<GameState | null>(null);
     const [networkError, setNetworkError] = useState<string | null>(null);
-    const [isPendingMove, setIsPendingMove] = useState(false);
+    const [isPendingMove, setIsPendingMove] = useState(false)
+
 
     const clientRef = useRef<Client | null>(null);
 
@@ -49,14 +50,19 @@ export function useGameConnection(gameId: string | undefined) {
         };
     }, [gameId]);
 
-    function makeMove({ move }: { move: Move }): void {
+    function makeMove({move}: { move: Move }): void {
+
         if (!gameId) {
             setNetworkError("Missing game id.");
             return;
         }
+        const playerId = localStorage.getItem("playerId");
 
+        if (!playerId) {
+            throw new Error("Player Id Unknown or invalid")
+        }
         const payload: MakeMoveRequest = {
-            userId: "e4526351-ff88-4655-b534-c40de2d294b9",
+            userId: playerId,
             move,
         };
 

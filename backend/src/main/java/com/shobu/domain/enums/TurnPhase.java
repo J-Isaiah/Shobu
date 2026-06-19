@@ -38,6 +38,5 @@ public enum TurnPhase {
             case WHITE -> WHITE_PASSIVE;
             case BLACK -> BLACK_PASSIVE;
         };
-
     }
 }
