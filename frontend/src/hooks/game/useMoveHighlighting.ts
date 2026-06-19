@@ -60,6 +60,7 @@ export function useMoveHighlighting(setUiError: Dispatch<SetStateAction<string |
     }
 
     function isAvailableCellToMove(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate) {
+        if (!gameState) return false
         if (playerColor != getSideToMove(gameState.turnPhase)){
             return false
         }
@@ -99,6 +100,8 @@ export function useMoveHighlighting(setUiError: Dispatch<SetStateAction<string |
             const passiveMoves = gameState.legalMovesForPlayer[boardId]
 
             const allMoves = passiveMoves[`${firstSelection.position.row},${firstSelection.position.col}`]
+
+            if (!allMoves) return false
 
 
             for (const move of allMoves) {
