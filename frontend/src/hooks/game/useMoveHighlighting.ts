@@ -3,55 +3,15 @@ import {BoardId} from "../../enums/game.ts";
 import type {CellSelection} from "../../types/game/Cell.ts";
 import type {BoardCoordinate, GameState} from "../../types/game/MoveTypes.ts";
 import {getMoveEnd, getSideToMove, isAggressiveMove} from "../../utils/game/movePhase.ts";
+import { canSelectStone } from "../../utils/game/canSelectStone.ts";
 
-export function useMoveHighlighting(setUiError: Dispatch<SetStateAction<string | null>>, gameState: GameState | null, isPendingMove: boolean, firstSelection: CellSelection | null) {
+function useMoveHighlighting(setUiError: Dispatch<SetStateAction<string | null>>, gameState: GameState | null,  firstSelection: CellSelection | null, isPendingMove: boolean) {
     const playerColor = localStorage.getItem("playerColor")
 
 
-    function isMovableStone(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): boolean {
-        // Highlights passive and aggressive stones
-
-        if (firstSelection || isPendingMove) {
-            return false
-        }
-
-        if (gameState === null) {
-            return false
-        }
-        if (playerColor != getSideToMove(gameState.turnPhase)){
-            return false
-        }
-        if (!isAggressiveMove(gameState.turnPhase) ) {
-            // if (gameState.legalMovesForPlayer[boardId][`${row},${col}`]) {
-            const legalMovesForBoard = gameState.legalMovesForPlayer[boardId]
-
-            if (legalMovesForBoard && legalMovesForBoard[`${row},${col}`]) {
-                return true;
-            }
-
-
-        }
-        if (gameState.pendingPassiveMove == null) {
-            return false
-        }
-
-        const allAggressiveMoves = gameState.legalMovesForPlayer[gameState.pendingPassiveMove.boardId][`${gameState.pendingPassiveMove.start.row},${gameState.pendingPassiveMove.start.col}`][0] ?? []
-        if (!allAggressiveMoves) {
-            return false
-        }
-
-        for (const aggressiveMove of allAggressiveMoves.aggressiveMoves) {
-            if (aggressiveMove.start.row == row && aggressiveMove.start.col == col && aggressiveMove.boardId == boardId) {
-                return true
-            }
-        }
-        return false
-
-
-    }
-
     function isSelectedStone(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): boolean {
         // Highlights Selected Stone
+        if (!gameState) return false
         if (playerColor != getSideToMove(gameState.turnPhase)){
             return false
         }
@@ -117,6 +77,27 @@ export function useMoveHighlighting(setUiError: Dispatch<SetStateAction<string |
 
     }
 
+
+    function isMovableStone(
+        boardId: BoardId,
+        row: BoardCoordinate,
+        col: BoardCoordinate
+    ): boolean {
+        if (firstSelection || isPendingMove) {
+            return false;
+        }
+
+        return canSelectStone(
+            gameState,
+            playerColor,
+            boardId,
+            row,
+            col
+        );
+    }
+
     return {isAvailableCellToMove, isSelectedStone, isMovableStone}
 
 }
+
+export default useMoveHighlighting

@@ -3,6 +3,7 @@ import type {CellSelection} from "../../types/game/Cell.ts";
 import {BoardId} from "../../enums/game.ts";
 import type {BoardCoordinate, GameState, Move, Position} from "../../types/game/MoveTypes.ts";
 import {buildMove, getSideToMove, isAggressiveMove, isOwnBoard} from "../../utils/game/movePhase.ts";
+import {canSelectStone} from "../../utils/game/canSelectStone.ts";
 
 
 interface useMoveControllerParams {
@@ -10,7 +11,8 @@ interface useMoveControllerParams {
     makeMove: ({move}: { move: Move }) => void;
 }
 
-export function useMoveController({gameState, makeMove,  }: useMoveControllerParams) {
+export function useMoveController({gameState, makeMove,}: useMoveControllerParams) {
+    const playerColor = localStorage.getItem("playerColor")
 
     const [uiError, setUiError] = useState<string | null>(null)
     const [firstSelection, setFirstSelection] = useState<CellSelection | null>(null)
@@ -31,6 +33,7 @@ export function useMoveController({gameState, makeMove,  }: useMoveControllerPar
         if (!currentGameState) return
 
         if (!isAggressiveMove(currentGameState.turnPhase)) {
+
             if (!isOwnBoard(boardId, getSideToMove(currentGameState.turnPhase))) {
                 setUiError("Passive move must start on your own board.");
                 setFirstSelection(null)
@@ -42,6 +45,19 @@ export function useMoveController({gameState, makeMove,  }: useMoveControllerPar
             boardId,
             position: clickedPosition,
         };
+        if (
+            firstSelection &&
+            canSelectStone(
+                currentGameState,
+                playerColor,
+                boardId,
+                row,
+                col
+            )
+        ) {
+            setFirstSelection(cellSelection);
+            return;
+        }
 
         if (firstSelection) {
             if (firstSelection.boardId !== cellSelection.boardId) {
@@ -57,6 +73,7 @@ export function useMoveController({gameState, makeMove,  }: useMoveControllerPar
             );
 
             await makeMove({move});
+
             setFirstSelection(null);
             return;
         }

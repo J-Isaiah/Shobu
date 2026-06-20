@@ -3,15 +3,16 @@ import "./gameWindow.css";
 import {useParams} from "react-router-dom";
 import {BoardId,} from "../enums/game.ts";
 import {useGameConnection} from "../hooks/game/useGameConnection.ts";
-import {useMoveHighlighting} from "../hooks/game/useMoveHighlighting.ts";
+import useMoveHighlighting from "../hooks/game/useMoveHighlighting.ts";
 import {useMoveController} from "../hooks/game/useMoveValidation.ts";
+import {canSelectStone} from "../utils/game/canSelectStone.ts";
 
 
 export default function GameWindow() {
     const {gameId} = useParams();
 
 
-    const {makeMove, gameState, isPendingMove, networkError} = useGameConnection(gameId)
+    const {makeMove, gameState, networkError,isPendingMove} = useGameConnection(gameId)
 
 
     const {
@@ -27,7 +28,7 @@ export default function GameWindow() {
         isMovableStone,
         isSelectedStone,
         isAvailableCellToMove
-    } = useMoveHighlighting(setUiError, gameState, isPendingMove, firstSelection)
+    } = useMoveHighlighting(setUiError, gameState, firstSelection,isPendingMove)
 
 
     if (gameState === null) {
