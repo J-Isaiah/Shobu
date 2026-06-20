@@ -11,3 +11,9 @@
     display: flex;
     gap: 2rem;
 }
+.boards {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+}

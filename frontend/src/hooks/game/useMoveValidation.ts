@@ -20,6 +20,11 @@ export function useMoveController({gameState, makeMove,}: useMoveControllerParam
 
     const currentGameState = gameState;
 
+    function resetClick(){
+        console.log("trying to reset")
+        setFirstSelection(null)
+    }
+
 
     async function handleCellClick(
         boardId: BoardId,
@@ -81,6 +86,6 @@ export function useMoveController({gameState, makeMove,}: useMoveControllerParam
         setFirstSelection(cellSelection);
     }
 
-    return {uiError,setUiError, firstSelection, handleCellClick}
+    return {uiError,setUiError, firstSelection, handleCellClick,resetClick}
 }
 
