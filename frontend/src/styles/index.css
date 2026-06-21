@@ -2,3 +2,10 @@
     --board-dark: #3E2723;
     --board-light:#D2B48C;
 }
+body {
+    margin: 0;
+}
+@font-face {
+    font-family: "Sherlock";
+    src: url("/SherlockHolmes-d93Bl.ttf") format("truetype");
+}

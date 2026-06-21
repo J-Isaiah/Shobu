@@ -1,5 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
+import "./GameOptionMenu.css"
 
 function extractGameId(input: string): string {
     return input.split("/").pop() ?? "";
@@ -40,34 +41,44 @@ export default function GameOptionMenu() {
     const joinGame = async () => {
         const gameId = extractGameId(joinString)
 
-        const response = await fetch(`/api/game/${gameId}/joinGame`,{
+        const response = await fetch(`/api/game/${gameId}/joinGame`, {
             method: "POST",
             headers: {"Ccontent-Type": "application/json"}
         })
 
-        const {playerId, playerColor}= await response.json();
+        const {playerId, playerColor} = await response.json();
         localStorage.setItem("playerId", playerId)
         localStorage.setItem("playerColor", playerColor)
         navigate(`/game/${gameId}`)
 
 
-
     }
     return <>
-        <div>
-            <div>
-                <button onClick={startGame}>Start Game</button>
+        <div className="home-page">
+            <div className="title-container wood-pattern">
+                <div className="title">
+                    SHŌBU
+                </div>
             </div>
             <div>
+                <button className="wood-pattern start-game" onClick={startGame}>Start Game</button>
+            </div>
+            <div className="wood-pattern or-container">
+                <div className="or-text">
+                    OR
+                </div>
+            </div>
+            <div className="input-field">
                 <input type="text"
+                       className="wood-pattern input"
                        value={joinString}
                        onChange={(e) => {
                            setJoinString(e.target.value)
                        }}
-                placeholder={"Game URL"}/>
+                       placeholder={"Game URL"}/>
             </div>
             <div>
-                <button onClick={joinGame}>Join Game</button>
+                <button className="wood-pattern join-button" onClick={joinGame}>Join Game</button>
             </div>
         </div>
     </>
