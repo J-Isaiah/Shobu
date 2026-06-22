@@ -23,7 +23,7 @@ export default function Board({color, board, boardId, onCellClick, isHighlighted
 }) {
 
     return (
-        <div className={`board board--${color}`}>
+        <div className={`board board--${color} board-pattern`}>
             {board.grid.map((row, rowIndex) =>
                 row.map((stone, colIndex) => (
                     <Cell

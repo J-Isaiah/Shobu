@@ -37,7 +37,7 @@ export default function GameWindow() {
 
 
     return (
-        <div className="gameSpace" onClick={resetClick}>
+        <div className="game-space" onClick={resetClick}>
             <div className="errorMessage">{uiError ? uiError : ""}</div>
 
             <div className="errorMessage">{networkError ? networkError : ""}</div>

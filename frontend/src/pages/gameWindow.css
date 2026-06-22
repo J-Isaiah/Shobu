@@ -17,3 +17,27 @@
     gap: 2rem;
     align-items: center;
 }
+
+
+
+.game-space {
+    min-height: 100vh;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background-image:
+            radial-gradient(
+                    circle at center,
+                    rgba(0, 0, 0, 0.65) 0%,
+                    rgba(0, 0, 0, 0.45) 35%,
+                    rgba(0, 0, 0, 0.2) 100%
+            ),
+            url("/joinGameBg.png");
+
+    background-size: cover;
+    background-position: 50% 8%;
+    background-repeat: no-repeat;
+}

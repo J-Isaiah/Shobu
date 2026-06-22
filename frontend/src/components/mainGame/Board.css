@@ -1,18 +1,44 @@
 .board {
+    transition: transform 160ms ease, box-shadow 160ms ease;
     display: grid;
     grid-template-columns: repeat(4, 64px);
     grid-template-rows: repeat(4, 64px);
     gap: 4px;
+
+    padding: 8px;
+    border-radius: 10px;
+
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.4),
+    0 6px 12px rgba(0, 0, 0, 0.25);
+
+    transform: translateY(-8px);
+}
+
+.board:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 28px 45px rgba(0, 0, 0, 0.45),
+    0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 .cell {
     width: 64px;
     height: 64px;
 }
+
 .board--dark {
     background-color: var(--board-dark);
+
+    background-image: url("/dark-wood.png");
+    background-repeat: repeat;
+    background-size: 100px 100px;
 }
 
 .board--light {
     background-color: var(--board-light);
+
+    background-image: url("/tileable_wood_texture.webp");
+}
+
+.board-pattern {
+
 }
