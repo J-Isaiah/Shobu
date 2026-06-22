@@ -23,8 +23,7 @@
 .cell {
     width: 64px;
     height: 64px;
-}
-
+    background-color: rgba(0, 0, 0, 0.08);}
 .board--dark {
     background-color: var(--board-dark);
 

@@ -1,7 +1,8 @@
 .stone {
-    width: 70%;
-    height: 70%;
-    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+
 }
 
 .stone--BLACK{
@@ -12,4 +13,4 @@
     background: #eee;
 }
 
-.highlighted-stone {background-color: red}
+/*.highlighted-stone {background-color: red}*/

@@ -1,7 +1,22 @@
-import "./stone.css"
 import type {StoneColor} from "../../types/game/MoveTypes.ts";
 
+export default function Stone({
+                                  color,
+                                  isHighlightedCell,
+                              }: {
+    color: StoneColor;
+    isHighlightedCell: boolean;
+}) {
+    const src =
+        color === "WHITE"
+            ? "/black-stone.png"
+            : "/white-stone.png";
 
-export default function Stone({ color,isHighlightedCell}: {color:StoneColor, isHighlightedCell: boolean}) {
-    return <div className={` ${isHighlightedCell?  "highlighted-stone":  ""} stone stone--${color}`} />;
+    return (
+        <img
+            src={src}
+            alt=""
+            className={`${isHighlightedCell ? "highlighted-stone" : ""} stone`}
+        />
+    );
 }

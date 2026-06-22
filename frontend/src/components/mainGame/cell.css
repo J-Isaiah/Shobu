@@ -2,8 +2,8 @@ button {
     background: none;
 
 }
-.highlighted {
-    outline: 3px solid blue;
-    cursor: pointer;
 
+.highlighted {
+    background-color: rgba(0, 0, 0, 0.35);
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.4);
 }
