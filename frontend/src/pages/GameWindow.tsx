@@ -5,6 +5,7 @@ import {BoardId,} from "../enums/game.ts";
 import {useGameConnection} from "../hooks/game/useGameConnection.ts";
 import useMoveHighlighting from "../hooks/game/useMoveHighlighting.ts";
 import {useMoveController} from "../hooks/game/useMoveValidation.ts";
+import {getGameStateMessage} from "../utils/game/cleanMoveDialog.ts";
 
 
 export default function GameWindow() {
@@ -12,6 +13,8 @@ export default function GameWindow() {
 
 
     const {makeMove, gameState, networkError, isPendingMove} = useGameConnection(gameId)
+
+
 
 
     const {
@@ -41,7 +44,6 @@ export default function GameWindow() {
             <div className="errorMessage">{uiError ? uiError : ""}</div>
 
             <div className="errorMessage">{networkError ? networkError : ""}</div>
-            {<div className="errorMessage">{gameState.turnPhase}</div>}
             <div className="boards" onClick={(event) => {
                 event.stopPropagation()
             }}>
@@ -90,8 +92,11 @@ export default function GameWindow() {
                         isAvailableCellToMove={isAvailableCellToMove}
                     />
                 </div>
-            </div>
 
+            </div>
+            <div className="game-state-dialog wood-pattern">
+                <div className="text-dialog">{getGameStateMessage(gameState.turnPhase, gameState.winner)}</div>
+            </div>
         </div>
     );
 }

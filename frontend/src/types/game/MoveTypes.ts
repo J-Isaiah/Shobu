@@ -49,7 +49,8 @@ export type TurnPhase =
     | "WHITE_PASSIVE"
     | "WHITE_AGGRESSIVE"
     | "BLACK_PASSIVE"
-    | "BLACK_AGGRESSIVE";
+    | "BLACK_AGGRESSIVE"
+    | "GAME_OVER";
 
 export interface SelectedCell {
     boardId: BoardId;
