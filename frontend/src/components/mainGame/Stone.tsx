@@ -8,7 +8,7 @@ export default function Stone({
     isHighlightedCell: boolean;
 }) {
     const src =
-        color === "WHITE"
+        color === "BLACK"
             ? "/black-stone.png"
             : "/white-stone.png";
 
