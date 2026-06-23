@@ -1,9 +1,11 @@
-import {Client} from "@stomp/stompjs"
-
+import { Client } from "@stomp/stompjs";
 
 export function createStompClient(): Client {
+    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+    const brokerURL = `${protocol}://${window.location.host}/ws`;
+
     return new Client({
-        brokerURL: "ws://localhost:8080/ws",
+        brokerURL,
         reconnectDelay: 5000,
 
         debug: (msg) => {
@@ -25,7 +27,5 @@ export function createStompClient(): Client {
         onWebSocketClose: (event) => {
             console.error("WEBSOCKET CLOSED", event);
         },
-
     });
-
 }

@@ -19,7 +19,6 @@ export default function GameWindow() {
 
     const {
         uiError,
-        setUiError,
         firstSelection,
         handleCellClick,
         resetClick
@@ -31,7 +30,7 @@ export default function GameWindow() {
         isMovableStone,
         isSelectedStone,
         isAvailableCellToMove
-    } = useMoveHighlighting(setUiError, gameState, firstSelection, isPendingMove)
+    } = useMoveHighlighting(gameState, firstSelection, isPendingMove)
 
 
     if (gameState === null) {

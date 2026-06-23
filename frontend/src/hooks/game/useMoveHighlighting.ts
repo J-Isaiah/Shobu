@@ -1,11 +1,10 @@
-import type { Dispatch, SetStateAction } from "react";
 import {BoardId} from "../../enums/game.ts";
 import type {CellSelection} from "../../types/game/Cell.ts";
 import type {BoardCoordinate, GameState} from "../../types/game/MoveTypes.ts";
 import {getMoveEnd, getSideToMove, isAggressiveMove} from "../../utils/game/movePhase.ts";
 import { canSelectStone } from "../../utils/game/canSelectStone.ts";
 
-function useMoveHighlighting(setUiError: Dispatch<SetStateAction<string | null>>, gameState: GameState | null,  firstSelection: CellSelection | null, isPendingMove: boolean) {
+function useMoveHighlighting(gameState: GameState | null,  firstSelection: CellSelection | null, isPendingMove: boolean) {
     const playerColor = localStorage.getItem("playerColor")
 
 
