@@ -40,6 +40,9 @@ export default function GameWindow() {
 
     return (
         <div className="game-space" onClick={resetClick}>
+            <div className="game-id-dialog wood-pattern">
+                <div className="text-dialog">Invite Code: {gameId}</div>
+            </div>
             <div className="errorMessage">{uiError ? uiError : ""}</div>
 
             <div className="errorMessage">{networkError ? networkError : ""}</div>
