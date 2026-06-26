@@ -4,5 +4,5 @@ import com.shobu.domain.enums.Stone;
 
 import java.util.UUID;
 
-public record JoinGameResponse(UUID gameId, UUID playerId, GameState gameState, Stone playerColor) {
+public record JoinGameResponse(String gameId, UUID playerId, GameState gameState, Stone playerColor) {
 }

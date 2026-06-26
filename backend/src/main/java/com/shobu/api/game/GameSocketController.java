@@ -32,7 +32,7 @@ public class GameSocketController {
 
     @MessageMapping("/makeMove")
     public void makeMove(
-            @DestinationVariable UUID gameId,
+            @DestinationVariable String gameId,
             MakeMoveRequest request
     ) {
         GameState gameState = gameService.makeMove(gameId, request);

@@ -26,17 +26,17 @@ public class GameController {
     }
 
     @PostMapping("/{gameId}/makeMove")
-    public GameState makeMove(@PathVariable UUID gameId, @RequestBody MakeMoveRequest request) {
+    public GameState makeMove(@PathVariable String gameId, @RequestBody MakeMoveRequest request) {
         return gameService.makeMove(gameId, request);
     }
     @PostMapping("{gameId}/joinGame")
-    public JoinGameResponse joinGame(@PathVariable UUID gameId){
+    public JoinGameResponse joinGame(@PathVariable String gameId){
         return gameService.joinGame(gameId);
 
     }
 
     @GetMapping("/{gameId}/getGameState")
-    public GameState getGameState(@PathVariable UUID gameId) {
+    public GameState getGameState(@PathVariable String gameId) {
         return gameService.getGameState(gameId);
     }
 

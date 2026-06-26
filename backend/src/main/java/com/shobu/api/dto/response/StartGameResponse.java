@@ -11,7 +11,7 @@ import com.shobu.domain.enums.BoardId;
 import com.shobu.domain.enums.Stone;
 import com.shobu.domain.moveData.LegalMove;
 
-public record StartGameResponse(UUID playerId, UUID gameId, Game game, EnumMap<BoardId, Map<String, List<LegalMove>>> legalMovesForPlayer ,
+public record StartGameResponse(UUID playerId, String gameId, Game game, EnumMap<BoardId, Map<String, List<LegalMove>>> legalMovesForPlayer ,
                                 Stone playerColor) {
 
 }

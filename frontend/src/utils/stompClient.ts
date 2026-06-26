@@ -2,8 +2,9 @@ import { Client } from "@stomp/stompjs";
 
 export function createStompClient(): Client {
     const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const brokerURL = `${protocol}://${window.location.host}/ws`;
-
+    const brokerURL = import.meta.env.DEV
+        ? "ws://localhost:8080/ws"
+        : `${protocol}://${window.location.host}/ws`;
     return new Client({
         brokerURL,
         reconnectDelay: 5000,

@@ -11,6 +11,7 @@ import com.shobu.domain.GameSession;
 import com.shobu.domain.GenerateLegalMoves;
 import com.shobu.domain.enums.Stone;
 import com.shobu.domain.errors.InvalidMoveException;
+import com.shobu.utils.GenerateShortCode;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -19,22 +20,29 @@ import java.util.UUID;
 
 @Service
 public class GameService {
-    private final Map<UUID, GameSession> games = new HashMap<>();
+    private final Map<String, GameSession> games = new HashMap<>();
+    private final GenerateShortCode generateShortCode;
+
+    public GameService(GenerateShortCode generateShortCode){
+        this.generateShortCode=generateShortCode;
+    }
 
     public StartGameResponse startGame() {
         UUID whitePlayerId = UUID.randomUUID();
         GameSession gameSession = new GameSession(whitePlayerId);
-        UUID id = UUID.randomUUID();
+        String id = generateShortCode.generate();
         Game game = Game.start(Stone.WHITE);
         gameSession.setGame(game);
         GenerateLegalMoves generator = new GenerateLegalMoves(game);
 
 
         games.put(id, gameSession);
+        System.out.println("Created game: [" + id + "]");
         return new StartGameResponse(whitePlayerId, id, game, generator.generateLegalMovesByBoardAndPosition(), Stone.WHITE);
     }
 
-    public GameState makeMove(UUID gameId, MakeMoveRequest request) {
+    public GameState makeMove(String gameId, MakeMoveRequest request) {
+        debugLookup("makeMove", gameId);
         GameSession gameSession = games.get(gameId);
         if (gameSession == null) {
             throw new GameNotFoundException(gameId);
@@ -61,17 +69,26 @@ public class GameService {
 
     }
 
-    public GameState getGameState(UUID gameId) {
+    public GameState getGameState(String gameId) {
+        debugLookup("getGameState", gameId);
+
         GameSession gameSession = games.get(gameId);
+
+        if (gameSession == null) {
+            throw new GameNotFoundException(gameId);
+        }
+
         Game game = gameSession.getGame();
-        GenerateLegalMoves generator = new GenerateLegalMoves(game);
+
         if (game == null) {
             throw new GameNotFoundException(gameId);
         }
-        return new GameState(gameId, game.getTurnPhase(), game.getBoards(), game.getWinner(), generator.generateLegalMovesByBoardAndPosition(), generator.getReturnedPassiveMove());
+
+        return buildGameState(gameId, game);
     }
 
-    public JoinGameResponse joinGame(UUID gameId) {
+    public JoinGameResponse joinGame(String gameId) {
+        debugLookup("joinGame", gameId);
         GameSession gameSession = games.get(gameId);
         Game game = gameSession.getGame();
 
@@ -90,12 +107,16 @@ public class GameService {
         return new JoinGameResponse(gameId, gameSession.getBlackPlayerId(), buildGameState(gameId, game), Stone.BLACK);
     }
 
-    private GameState buildGameState(UUID gameId, Game game) {
+    private GameState buildGameState(String gameId, Game game) {
         GenerateLegalMoves generator = new GenerateLegalMoves(game);
 
 
         return new GameState(gameId, game.getTurnPhase(), game.getBoards(), game.getWinner(), generator.generateLegalMovesByBoardAndPosition(), generator.getReturnedPassiveMove());
 
+    }
+    private void debugLookup(String method, String gameId) {
+        System.out.println(method + " lookup: [" + gameId + "]");
+        System.out.println("active games: " + games.keySet());
     }
 
 }

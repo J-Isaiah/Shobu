@@ -22,6 +22,7 @@ export function useGameConnection(gameId: string | undefined) {
     const clientRef = useRef<Client | null>(null);
 
     useEffect(() => {
+        console.log("gameID", gameId)
         if (!gameId) {
             setNetworkError("Missing game id.");
             return;
