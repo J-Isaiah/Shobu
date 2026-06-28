@@ -1,6 +1,8 @@
 import type {TurnPhase} from "../../types/game/MoveTypes.ts";
+import {useIsMobile} from "../screenSize/isMobile.ts";
 
 export function getGameStateMessage(
+
     turnPhase: TurnPhase,
     winner?: "WHITE" | "BLACK" | null,
 ): string {
