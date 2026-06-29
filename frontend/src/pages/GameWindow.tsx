@@ -6,12 +6,10 @@ import {useGameConnection} from "../hooks/game/useGameConnection.ts";
 import useMoveHighlighting from "../hooks/game/useMoveHighlighting.ts";
 import {useMoveController} from "../hooks/game/useMoveValidation.ts";
 import {getGameStateMessage} from "../utils/game/cleanMoveDialog.ts";
-import {useIsMobile} from "../utils/screenSize/isMobile.ts";
 
 
 export default function GameWindow() {
     const {gameId} = useParams();
-    const isMobile = useIsMobile();
 
 
     const {makeMove, gameState, networkError, isPendingMove} = useGameConnection(gameId)
@@ -43,7 +41,7 @@ export default function GameWindow() {
     return (
         <div className="game-space" onClick={resetClick}>
             <div className="game-id-dialog wood-pattern">
-                <div className="text-dialog">{isMobile ? "Invite" :"Invite Code"}: {gameId}</div>
+                <div className="text-dialog">Invite Code: {gameId}</div>
             </div>
             {/*<div className="errorMessage">{uiError ? uiError : ""}</div>*/}
 

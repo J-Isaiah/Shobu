@@ -87,56 +87,36 @@
 
 @media (max-width: 768px) {
     .boards {
-        grid-template-columns: auto;
+        grid-template-columns: repeat(2, auto);
         gap: 1rem;
     }
 
-    .board {
-        transform: none;
-    }
-
-    .boards > .board:nth-child(even) {
-        transform: translateX(100px);
-
-    }
-
-    .boards > .board:nth-child(odd) {
-        transform: translateX(-100px);
-
-    }
-
+    .board,
     .board:hover {
         transform: none;
     }
 
     .game-id-dialog {
-        left: auto;
-        right: 4rem;
-        top: 6.5rem;
-        width: 20%;
-        height: 5%;
-        padding: 2rem 1rem;
+        top: 2rem;
+        left: 2rem;
+        right: auto;
+
+        width: 13rem;
+        height: 4rem;
+        padding: 0;
         font-size: 1rem;
-        justify-content: center;
-        align-items: center;
     }
 
     .game-state-dialog {
-        left: 2.5rem;
-        bottom: 5.52rem;
-
-        right: auto;
+        bottom: 2rem;
+        right: 2rem;
+        left: auto;
         top: auto;
 
-        width: 8rem;
-        height: 5rem;
-        padding: 1rem 1.5rem;
-
+        width: 13rem;
+        height: 4rem;
+        padding: 0;
         font-size: 1rem;
-    }
-
-    .text-dialog {
-        text-align: center;
     }
 
     .game-space {
@@ -147,56 +127,5 @@
                 rgba(0, 0, 0, 0.2) 100%
         ),
         url("/MobileBg.png");
-    }
-}
-
-@media (max-width: 392px) {
-    .boards > .board:nth-child(2) {
-        transform: translateX(100px);
-    }
-
-    .boards > .board:nth-child(3) {
-        transform: translateX(-100px);
-    }
-
-    .boards > .board:nth-child(1) {
-        transform: translate(-100px, 185px);
-    }
-
-    .boards > .board:nth-child(4) {
-        transform: translate(100px, -185px);
-    }
-
-    .game-id-dialog {
-        top: 3rem;
-        right: 2rem;
-
-        width: 6rem;
-        min-height: 3.5rem;
-        height: auto;
-
-        padding: 0.75rem;
-        font-size: 0.9rem;
-    }
-
-    .game-state-dialog {
-        left: 1.2rem;
-        bottom: 4rem;
-
-        width: 8.5rem;
-        min-height: 3.5rem;
-        height: auto;
-
-        padding: 0.75rem;
-        font-size: 0.9rem;
-    }
-
-    .text-dialog {
-        text-align: center;
-        line-height: 1.2;
-    }
-
-    .game-space {
-        overflow: hidden;
     }
 }
