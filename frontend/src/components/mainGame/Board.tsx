@@ -22,21 +22,32 @@ export default function Board({color, board, boardId, onCellClick, isHighlighted
     isAvailableCellToMove : (boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate) => boolean
 }) {
 
+    const playerColor = localStorage.getItem("playerColor")
+    const shouldRotate = playerColor === "BLACK";
+
+    const rowIndexes = shouldRotate ? [3, 2, 1, 0] : [0, 1, 2, 3];
+    const colIndexes = shouldRotate ? [3, 2, 1, 0] : [0, 1, 2, 3];
     return (
         <div className={`board board--${color} board-pattern`}>
-            {board.grid.map((row, rowIndex) =>
-                row.map((stone, colIndex) => (
-                    <Cell
-                        key={`${rowIndex}-${colIndex}`}
-                        stone={stone}
-                        onClick={onCellClick}
-                        boardId={boardId}
-                        position={{row: toBoardCoordinate(rowIndex), col: toBoardCoordinate(colIndex)}}
-                        isHighlightedStone={isHighlightedStone(boardId, toBoardCoordinate(rowIndex), toBoardCoordinate(colIndex))}
-                        isHighlightedCell={isHighlightedCell(boardId, toBoardCoordinate(rowIndex), toBoardCoordinate(colIndex))}
-                        isAvailableCellToMove={isAvailableCellToMove(boardId, toBoardCoordinate(rowIndex), toBoardCoordinate(colIndex))}
-                    />
-                ))
+            {rowIndexes.map((rowIndex) =>
+                colIndexes.map((colIndex) => {
+                    const rowCoord = toBoardCoordinate(rowIndex);
+                    const colCoord = toBoardCoordinate(colIndex);
+
+                    return (
+                        <Cell
+                            key={`${rowIndex}-${colIndex}`}
+                            stone={board.grid[rowIndex][colIndex]}
+                            onClick={onCellClick}
+                            boardId={boardId}
+                            position={{ row: rowCoord, col: colCoord }}
+                            isHighlightedStone={isHighlightedStone(boardId, rowCoord, colCoord)}
+                            isHighlightedCell={isHighlightedCell(boardId, rowCoord, colCoord)}
+                            isAvailableCellToMove={isAvailableCellToMove(boardId, rowCoord, colCoord)}
+                            isRotated={shouldRotate}
+                        />
+                    );
+                })
             )}
         </div>
     );

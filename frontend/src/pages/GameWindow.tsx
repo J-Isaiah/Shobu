@@ -10,11 +10,10 @@ import {getGameStateMessage} from "../utils/game/cleanMoveDialog.ts";
 
 export default function GameWindow() {
     const {gameId} = useParams();
+    const playerColor = localStorage.getItem("playerColor")
 
 
     const {makeMove, gameState, networkError, isPendingMove} = useGameConnection(gameId)
-
-
 
 
     const {
@@ -36,6 +35,10 @@ export default function GameWindow() {
     if (gameState === null) {
         return <div>Loading game...</div>;
     }
+    const topDark = playerColor == "WHITE" ? BoardId.BLACK_DARK : BoardId.WHITE_DARK;
+    const topLight = playerColor == "WHITE" ? BoardId.BLACK_LIGHT : BoardId.WHITE_LIGHT;
+    const bottomLight = playerColor == "WHITE" ? BoardId.WHITE_LIGHT : BoardId.BLACK_LIGHT;
+    const bottomDark = playerColor == "WHITE" ? BoardId.WHITE_DARK : BoardId.BLACK_DARK;
 
 
     return (
@@ -49,47 +52,47 @@ export default function GameWindow() {
             <div className="boards" onClick={(event) => {
                 event.stopPropagation()
             }}>
-                    <Board
-                        color="dark"
-                        board={gameState.updatedGameBoards.BLACK_DARK}
-                        boardId={BoardId.BLACK_DARK}
-                        onCellClick={handleCellClick}
-                        isHighlightedStone={isMovableStone}
-                        isHighlightedCell={isSelectedStone}
-                        isAvailableCellToMove={isAvailableCellToMove}
-                    />
+                <Board
+                    color="dark"
+                    board={gameState.updatedGameBoards[topDark]}
+                    boardId={topDark}
+                    onCellClick={handleCellClick}
+                    isHighlightedStone={isMovableStone}
+                    isHighlightedCell={isSelectedStone}
+                    isAvailableCellToMove={isAvailableCellToMove}
+                />
 
-                    <Board
-                        color="light"
-                        board={gameState.updatedGameBoards.BLACK_LIGHT}
-                        boardId={BoardId.BLACK_LIGHT}
-                        onCellClick={handleCellClick}
+                <Board
+                    color="light"
+                    board={gameState.updatedGameBoards[topLight]}
+                    boardId={topLight}
+                    onCellClick={handleCellClick}
 
-                        isAvailableCellToMove={isAvailableCellToMove}
-                        isHighlightedCell={isSelectedStone}
-                        isHighlightedStone={isMovableStone}
-                    />
+                    isAvailableCellToMove={isAvailableCellToMove}
+                    isHighlightedCell={isSelectedStone}
+                    isHighlightedStone={isMovableStone}
+                />
 
-                    <Board
-                        color="light"
-                        board={gameState.updatedGameBoards.WHITE_LIGHT}
-                        boardId={BoardId.WHITE_LIGHT}
-                        onCellClick={handleCellClick}
+                <Board
+                    color="light"
+                    board={gameState.updatedGameBoards[bottomLight]}
+                    boardId={bottomLight}
+                    onCellClick={handleCellClick}
 
-                        isAvailableCellToMove={isAvailableCellToMove}
-                        isHighlightedCell={isSelectedStone}
-                        isHighlightedStone={isMovableStone}
-                    />
+                    isAvailableCellToMove={isAvailableCellToMove}
+                    isHighlightedCell={isSelectedStone}
+                    isHighlightedStone={isMovableStone}
+                />
 
-                    <Board
-                        color="dark"
-                        board={gameState.updatedGameBoards.WHITE_DARK}
-                        boardId={BoardId.WHITE_DARK}
-                        onCellClick={handleCellClick}
-                        isHighlightedStone={isMovableStone}
-                        isHighlightedCell={isSelectedStone}
-                        isAvailableCellToMove={isAvailableCellToMove}
-                    />
+                <Board
+                    color="dark"
+                    board={gameState.updatedGameBoards[bottomDark]}
+                    boardId={bottomDark}
+                    onCellClick={handleCellClick}
+                    isHighlightedStone={isMovableStone}
+                    isHighlightedCell={isSelectedStone}
+                    isAvailableCellToMove={isAvailableCellToMove}
+                />
 
             </div>
             <div className="game-state-dialog wood-pattern">
