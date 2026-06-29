@@ -65,3 +65,23 @@ jobs:
       - name: build Docker images
         run: docker compose build
 
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend, docker]
+    if: github.ref ==  'refs/heads/main'
+
+
+    steps:
+      - name: Deploy To Vps
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd ~/Shobu
+            git pull origin main
+            docker compose up --build -d
+            docker immage prune -f 
+
+
