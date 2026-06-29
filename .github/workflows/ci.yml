@@ -82,6 +82,6 @@ jobs:
             cd ~/Shobu
             git pull origin main
             docker compose up --build -d
-            docker immage prune -f 
+            docker image prune -f 
 
 
