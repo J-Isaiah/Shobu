@@ -4,7 +4,7 @@ import "./stone.css"
 import type {OnCellClick, Position, StoneColor} from "../../types/game/MoveTypes.ts";
 import type {BoardId} from "../../enums/game.ts";
 
-export default function Cell({stone, onClick, boardId, position, isHighlightedStone, isHighlightedCell, isAvailableCellToMove, isRotated}: {
+export default function Cell({stone, onClick, boardId, position, isHighlightedStone, isHighlightedCell, isAvailableCellToMove, id}: {
     boardId: BoardId,
     stone: StoneColor,
     onClick: OnCellClick,
@@ -12,12 +12,12 @@ export default function Cell({stone, onClick, boardId, position, isHighlightedSt
     isHighlightedStone: boolean
     isHighlightedCell: boolean
     isAvailableCellToMove: boolean
-    isRotated:boolean
+    id: string
 }) {
 
 
     return (
-        <button className={` ${isHighlightedStone || isAvailableCellToMove ? "highlighted" : "cell"}`} onClick={() => onClick(boardId, position.row, position.col)}>
+        <button id={id} className={` ${isHighlightedStone || isAvailableCellToMove ? "highlighted" : "cell"}`} onClick={() => onClick(boardId, position.row, position.col)}>
             {stone && <Stone color={stone} isHighlightedCell={isHighlightedCell}/>}
         </button>
     );

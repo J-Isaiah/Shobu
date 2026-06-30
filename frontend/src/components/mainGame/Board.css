@@ -55,3 +55,6 @@
         height: clamp(15px, 10vw, 44px);
     }
 }
+.board-wrapper {
+    position: relative;
+}

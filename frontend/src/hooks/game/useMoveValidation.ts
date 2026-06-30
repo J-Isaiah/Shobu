@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import type {CellSelection} from "../../types/game/Cell.ts";
 import {BoardId} from "../../enums/game.ts";
 import type {BoardCoordinate, GameState, Move, Position} from "../../types/game/MoveTypes.ts";
@@ -16,11 +16,22 @@ export function useMoveController({gameState, makeMove,}: useMoveControllerParam
 
     const [uiError, setUiError] = useState<string | null>(null)
     const [firstSelection, setFirstSelection] = useState<CellSelection | null>(null)
+    const [passiveArrow, setPassiveArrow] = useState<Move | null>(null);
+    const [aggressiveArrow, setAggressiveArrow] = useState<Move | null>(null);
 
+    // Handle passive arrow going away after aggressive rerender
+    useEffect(() => {
+        if (firstSelection != null){
+            useEffect(() => {
+                setPassiveArrow(null);
+                setAggressiveArrow(null);
+            }, [gameState?.turnPhase]);
+        }
+    }, [getSideToMove(gameState?.turnPhase)]);
 
     const currentGameState = gameState;
 
-    function resetClick(){
+    function resetClick() {
         console.log("trying to reset")
         setFirstSelection(null)
     }
@@ -76,7 +87,11 @@ export function useMoveController({gameState, makeMove,}: useMoveControllerParam
                 firstSelection.position,
                 cellSelection.position
             );
-
+            if (isAggressiveMove(currentGameState.turnPhase)) {
+                setAggressiveArrow(move);
+            } else {
+                setPassiveArrow(move);
+            }
             await makeMove({move});
 
             setFirstSelection(null);
@@ -86,6 +101,13 @@ export function useMoveController({gameState, makeMove,}: useMoveControllerParam
         setFirstSelection(cellSelection);
     }
 
-    return {uiError,setUiError, firstSelection, handleCellClick,resetClick}
-}
+    return {
+        uiError,
+        setUiError,
+        firstSelection,
+        passiveArrow,
+        aggressiveArrow,
+        handleCellClick,
+        resetClick,
+    };}
 

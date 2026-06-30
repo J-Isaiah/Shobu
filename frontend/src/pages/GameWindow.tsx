@@ -20,7 +20,9 @@ export default function GameWindow() {
         // uiError,
         firstSelection,
         handleCellClick,
-        resetClick
+        resetClick,
+        passiveArrow,
+        aggressiveArrow
     } = useMoveController({
         gameState,
         makeMove,
@@ -53,6 +55,9 @@ export default function GameWindow() {
                 event.stopPropagation()
             }}>
                 <Board
+                    aggressiveArrow={aggressiveArrow}
+                    passiveArrow={passiveArrow}
+
                     color="dark"
                     board={gameState.updatedGameBoards[topDark]}
                     boardId={topDark}
@@ -63,6 +68,8 @@ export default function GameWindow() {
                 />
 
                 <Board
+                    aggressiveArrow={aggressiveArrow}
+                    passiveArrow={passiveArrow}
                     color="light"
                     board={gameState.updatedGameBoards[topLight]}
                     boardId={topLight}
@@ -74,6 +81,8 @@ export default function GameWindow() {
                 />
 
                 <Board
+                    aggressiveArrow={aggressiveArrow}
+                    passiveArrow={passiveArrow}
                     color="light"
                     board={gameState.updatedGameBoards[bottomLight]}
                     boardId={bottomLight}
@@ -85,6 +94,8 @@ export default function GameWindow() {
                 />
 
                 <Board
+                    aggressiveArrow={aggressiveArrow}
+                    passiveArrow={passiveArrow}
                     color="dark"
                     board={gameState.updatedGameBoards[bottomDark]}
                     boardId={bottomDark}

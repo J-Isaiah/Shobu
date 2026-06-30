@@ -53,7 +53,8 @@ export function isAggressiveMove(turnPhase: TurnPhase):boolean{
     return turnPhase.includes("AGGRESSIVE")
 }
 
-export function getSideToMove(turnPhase: TurnPhase):PlayerColor{
+export function getSideToMove(turnPhase: TurnPhase | undefined):PlayerColor | undefined{
+    if (!turnPhase) return undefined;
    return turnPhase.startsWith("WHITE") ? "WHITE": "BLACK"
 
 }
