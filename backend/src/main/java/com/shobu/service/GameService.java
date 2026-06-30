@@ -14,17 +14,17 @@ import com.shobu.domain.errors.InvalidMoveException;
 import com.shobu.utils.GenerateShortCode;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class GameService {
-    private final Map<String, GameSession> games = new HashMap<>();
+    private final Map<String, GameSession> games = new ConcurrentHashMap<>();
     private final GenerateShortCode generateShortCode;
 
-    public GameService(GenerateShortCode generateShortCode){
-        this.generateShortCode=generateShortCode;
+    public GameService(GenerateShortCode generateShortCode) {
+        this.generateShortCode = generateShortCode;
     }
 
     public StartGameResponse startGame() {
@@ -62,10 +62,16 @@ public class GameService {
         GenerateLegalMoves generator = new GenerateLegalMoves(updatedGame);
         gameSession.setGame(updatedGame);
 
-        // TODO: Return legal moves
-        games.put(gameId, gameSession);
+        Stone winner = updatedGame.getWinner();
 
-        return new GameState(gameId, updatedGame.getTurnPhase(), updatedGame.getBoards(), updatedGame.getWinner(), generator.generateLegalMovesByBoardAndPosition(), generator.getReturnedPassiveMove());
+        if (winner != null) {
+            games.remove(gameId);
+        } else {
+            games.put(gameId, gameSession);
+        }
+
+
+        return new GameState(gameId, updatedGame.getTurnPhase(), updatedGame.getBoards(), winner, generator.generateLegalMovesByBoardAndPosition(), generator.getReturnedPassiveMove());
 
     }
 
@@ -90,6 +96,10 @@ public class GameService {
     public JoinGameResponse joinGame(String gameId) {
         debugLookup("joinGame", gameId);
         GameSession gameSession = games.get(gameId);
+
+        if (gameSession == null) {
+            throw new GameNotFoundException(gameId);
+        }
         Game game = gameSession.getGame();
 
         if (game == null) {
@@ -114,6 +124,7 @@ public class GameService {
         return new GameState(gameId, game.getTurnPhase(), game.getBoards(), game.getWinner(), generator.generateLegalMovesByBoardAndPosition(), generator.getReturnedPassiveMove());
 
     }
+
     private void debugLookup(String method, String gameId) {
         System.out.println(method + " lookup: [" + gameId + "]");
         System.out.println("active games: " + games.keySet());
