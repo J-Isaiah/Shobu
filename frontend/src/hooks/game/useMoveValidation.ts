@@ -1,35 +1,51 @@
-import { useState} from "react";
+import {useEffect, useState} from "react";
 import type {CellSelection} from "../../types/game/Cell.ts";
 import {BoardId} from "../../enums/game.ts";
 import type {BoardCoordinate, GameState, Move, Position} from "../../types/game/MoveTypes.ts";
 import {buildMove, getSideToMove, isAggressiveMove, isOwnBoard} from "../../utils/game/movePhase.ts";
 import {canSelectStone} from "../../utils/game/canSelectStone.ts";
 
-
 interface useMoveControllerParams {
     gameState: GameState | null
     makeMove: ({move}: { move: Move }) => void;
 }
 
-export function useMoveController({gameState, makeMove,}: useMoveControllerParams) {
+export function useMoveController({gameState, makeMove}: useMoveControllerParams) {
+    const playerColor = localStorage.getItem("playerColor");
 
-    console.log(gameState)
-    const playerColor = localStorage.getItem("playerColor")
+    const [uiError, setUiError] = useState<string | null>(null);
+    const [firstSelection, setFirstSelection] = useState<CellSelection | null>(null);
 
-    const [uiError, setUiError] = useState<string | null>(null)
-    const [firstSelection, setFirstSelection] = useState<CellSelection | null>(null)
-    // const [passiveArrow, setPassiveArrow] = useState<Move | null | undefined>(null);
-    // const [aggressiveArrow, setAggressiveArrow] = useState<Move | null | undefined>(null);
-    const passiveArrow = firstSelection ? null : gameState?.pendingPassiveMove ?? null;
-    const aggressiveArrow = firstSelection ? null : gameState?.lastAggressiveMove ?? null;
+    const [optimisticPassiveArrow, setOptimisticPassiveArrow] = useState<Move | null>(null);
+    const [optimisticAggressiveArrow, setOptimisticAggressiveArrow] = useState<Move | null>(null);
+
+    const shouldHideArrows =
+        firstSelection && gameState && !isAggressiveMove(gameState.turnPhase);
+
+    const passiveArrow = shouldHideArrows
+        ? null
+        : optimisticPassiveArrow ?? gameState?.pendingPassiveMove ?? null;
+
+    const aggressiveArrow = shouldHideArrows
+        ? null
+        : optimisticAggressiveArrow ?? gameState?.lastAggressiveMove ?? null;
 
     const currentGameState = gameState;
 
     function resetClick() {
-        console.log("trying to reset")
-        setFirstSelection(null)
+        setFirstSelection(null);
     }
 
+    useEffect(() => {
+        if (!gameState) {
+            setOptimisticPassiveArrow(null);
+            setOptimisticAggressiveArrow(null);
+            return;
+        }
+
+        setOptimisticPassiveArrow(null);
+        setOptimisticAggressiveArrow(null);
+    }, [gameState]);
 
     async function handleCellClick(
         boardId: BoardId,
@@ -40,13 +56,12 @@ export function useMoveController({gameState, makeMove,}: useMoveControllerParam
 
         const clickedPosition: Position = {row, col};
 
-        if (!currentGameState) return
+        if (!currentGameState) return;
 
         if (!isAggressiveMove(currentGameState.turnPhase)) {
-
             if (!isOwnBoard(boardId, getSideToMove(currentGameState.turnPhase))) {
                 setUiError("Passive move must start on your own board.");
-                setFirstSelection(null)
+                setFirstSelection(null);
                 return;
             }
         }
@@ -55,6 +70,7 @@ export function useMoveController({gameState, makeMove,}: useMoveControllerParam
             boardId,
             position: clickedPosition,
         };
+
         if (
             firstSelection &&
             canSelectStone(
@@ -72,7 +88,7 @@ export function useMoveController({gameState, makeMove,}: useMoveControllerParam
         if (firstSelection) {
             if (firstSelection.boardId !== cellSelection.boardId) {
                 setUiError("Second selection should be on first selection board");
-                setFirstSelection(null)
+                setFirstSelection(null);
                 return;
             }
 
@@ -81,6 +97,14 @@ export function useMoveController({gameState, makeMove,}: useMoveControllerParam
                 firstSelection.position,
                 cellSelection.position
             );
+
+            if (isAggressiveMove(currentGameState.turnPhase)) {
+                setOptimisticAggressiveArrow(move);
+            } else {
+                setOptimisticPassiveArrow(move);
+                setOptimisticAggressiveArrow(null);
+            }
+
             await makeMove({move});
 
             setFirstSelection(null);
@@ -100,4 +124,3 @@ export function useMoveController({gameState, makeMove,}: useMoveControllerParam
         resetClick,
     };
 }
-
