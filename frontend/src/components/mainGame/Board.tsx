@@ -1,16 +1,16 @@
 import "./Board.css";
-import type { BoardColor } from "../../types/game/board.ts";
+import type {BoardColor} from "../../types/game/board.ts";
 import Cell from "./Cell";
-import type {
-    Board,
-    BoardCoordinate,
-    Move,
-    OnCellClick,
-} from "../../types/game/MoveTypes.ts";
-import type { BoardId } from "../../enums/game.ts";
-import { useBoardMeasurements, getCellCenter } from "../../hooks/useBoardMeasurements.ts";
+import type {Board, BoardCoordinate, Move, OnCellClick,} from "../../types/game/MoveTypes.ts";
+import type {BoardId} from "../../enums/game.ts";
+import {getCellCenter, useBoardMeasurements} from "../../hooks/useBoardMeasurements.ts";
 import MoveArrow from "./MoveArrow";
-import { getMoveEnd } from "../../utils/game/movePhase"; // <-- wherever yours lives
+import {getMoveEnd} from "../../utils/game/movePhase"; // <-- wherever yours lives
+
+
+function toDisplayCoord(coord: BoardCoordinate, shouldRotate: boolean): BoardCoordinate {
+    return shouldRotate ? ((3 - coord) as BoardCoordinate) : coord;
+}
 
 function toBoardCoordinate(value: number): BoardCoordinate {
     if (value < 0 || value > 3) {
@@ -55,7 +55,7 @@ export default function Board({
                                   passiveArrow,
                                   aggressiveArrow,
                               }: Props) {
-    const { boardRef, measurements } = useBoardMeasurements();
+    const {boardRef, measurements} = useBoardMeasurements();
 
     const playerColor = localStorage.getItem("playerColor");
     const shouldRotate = playerColor === "BLACK";
@@ -75,13 +75,15 @@ export default function Board({
                     <MoveArrow
                         label="passive"
                         from={getCellCenter(
-                            passiveArrow.start.row,
-                            passiveArrow.start.col,
+                            toDisplayCoord(passiveArrow.start.row, shouldRotate),
+
+                            toDisplayCoord(passiveArrow.start.col, shouldRotate),
                             measurements.cellSize
                         )}
                         to={getCellCenter(
-                            end.row,
-                            end.col,
+
+                            toDisplayCoord(end.row, shouldRotate),
+                            toDisplayCoord(end.col, shouldRotate),
                             measurements.cellSize
                         )}
                     />
@@ -95,13 +97,15 @@ export default function Board({
                     <MoveArrow
                         label="aggressive"
                         from={getCellCenter(
-                            aggressiveArrow.start.row,
-                            aggressiveArrow.start.col,
+                            toDisplayCoord(aggressiveArrow.start.row, shouldRotate),
+
+                            toDisplayCoord(aggressiveArrow.start.col, shouldRotate),
                             measurements.cellSize
                         )}
                         to={getCellCenter(
-                            end.row,
-                            end.col,
+
+                            toDisplayCoord(end.row, shouldRotate),
+                            toDisplayCoord(end.col, shouldRotate),
                             measurements.cellSize
                         )}
                     />
@@ -120,7 +124,7 @@ export default function Board({
                             stone={board.grid[rowIndex][colIndex]}
                             onClick={onCellClick}
                             boardId={boardId}
-                            position={{ row: rowCoord, col: colCoord }}
+                            position={{row: rowCoord, col: colCoord}}
                             isHighlightedStone={isHighlightedStone(boardId, rowCoord, colCoord)}
                             isHighlightedCell={isHighlightedCell(boardId, rowCoord, colCoord)}
                             isAvailableCellToMove={isAvailableCellToMove(boardId, rowCoord, colCoord)}

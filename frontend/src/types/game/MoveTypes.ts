@@ -30,6 +30,7 @@ export interface GameState {
     winner: "WHITE" | "BLACK" | null;
     legalMovesForPlayer: LegalMovesForPlayer;
     pendingPassiveMove: Move
+    lastAggressiveMove: Move
 }
 
 export interface Board {

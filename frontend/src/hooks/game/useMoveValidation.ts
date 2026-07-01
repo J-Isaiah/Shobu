@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useState} from "react";
 import type {CellSelection} from "../../types/game/Cell.ts";
 import {BoardId} from "../../enums/game.ts";
 import type {BoardCoordinate, GameState, Move, Position} from "../../types/game/MoveTypes.ts";
@@ -12,22 +12,16 @@ interface useMoveControllerParams {
 }
 
 export function useMoveController({gameState, makeMove,}: useMoveControllerParams) {
+
+    console.log(gameState)
     const playerColor = localStorage.getItem("playerColor")
 
     const [uiError, setUiError] = useState<string | null>(null)
     const [firstSelection, setFirstSelection] = useState<CellSelection | null>(null)
-    const [passiveArrow, setPassiveArrow] = useState<Move | null>(null);
-    const [aggressiveArrow, setAggressiveArrow] = useState<Move | null>(null);
-
-    // Handle passive arrow going away after aggressive rerender
-    useEffect(() => {
-        if (firstSelection != null){
-            useEffect(() => {
-                setPassiveArrow(null);
-                setAggressiveArrow(null);
-            }, [gameState?.turnPhase]);
-        }
-    }, [getSideToMove(gameState?.turnPhase)]);
+    // const [passiveArrow, setPassiveArrow] = useState<Move | null | undefined>(null);
+    // const [aggressiveArrow, setAggressiveArrow] = useState<Move | null | undefined>(null);
+    const passiveArrow = firstSelection ? null : gameState?.pendingPassiveMove ?? null;
+    const aggressiveArrow = firstSelection ? null : gameState?.lastAggressiveMove ?? null;
 
     const currentGameState = gameState;
 
@@ -87,11 +81,6 @@ export function useMoveController({gameState, makeMove,}: useMoveControllerParam
                 firstSelection.position,
                 cellSelection.position
             );
-            if (isAggressiveMove(currentGameState.turnPhase)) {
-                setAggressiveArrow(move);
-            } else {
-                setPassiveArrow(move);
-            }
             await makeMove({move});
 
             setFirstSelection(null);
@@ -109,5 +98,6 @@ export function useMoveController({gameState, makeMove,}: useMoveControllerParam
         aggressiveArrow,
         handleCellClick,
         resetClick,
-    };}
+    };
+}
 

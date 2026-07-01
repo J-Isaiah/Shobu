@@ -45,7 +45,7 @@ export function buildMove(
     };
 }
 
-export function isOwnBoard(boardId: BoardId, sideToMove: PlayerColor): boolean {
+export function isOwnBoard(boardId: BoardId, sideToMove: PlayerColor | undefined): boolean {
     return boardId.startsWith(sideToMove);
 }
 
