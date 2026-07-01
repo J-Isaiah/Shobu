@@ -10,6 +10,18 @@ interface useMoveControllerParams {
     makeMove: ({move}: { move: Move }) => void;
 }
 
+function sameMove(a: Move | null | undefined, b: Move | null | undefined): boolean {
+    if (!a || !b) return false;
+
+    return (
+        a.boardId === b.boardId &&
+        a.distance === b.distance &&
+        a.direction === b.direction &&
+        a.start.row === b.start.row &&
+        a.start.col === b.start.col
+    );
+}
+
 export function useMoveController({gameState, makeMove}: useMoveControllerParams) {
     const playerColor = localStorage.getItem("playerColor");
 
@@ -19,6 +31,8 @@ export function useMoveController({gameState, makeMove}: useMoveControllerParams
     const [optimisticPassiveArrow, setOptimisticPassiveArrow] = useState<Move | null>(null);
     const [optimisticAggressiveArrow, setOptimisticAggressiveArrow] = useState<Move | null>(null);
 
+    const [dismissedLastAggressiveArrow, setDismissedLastAggressiveArrow] = useState<Move | null>(null);
+
     const shouldHideArrows =
         firstSelection && gameState && !isAggressiveMove(gameState.turnPhase);
 
@@ -26,9 +40,14 @@ export function useMoveController({gameState, makeMove}: useMoveControllerParams
         ? null
         : optimisticPassiveArrow ?? gameState?.pendingPassiveMove ?? null;
 
+    const serverAggressiveArrow =
+        sameMove(dismissedLastAggressiveArrow, gameState?.lastAggressiveMove)
+            ? null
+            : gameState?.lastAggressiveMove ?? null;
+
     const aggressiveArrow = shouldHideArrows
         ? null
-        : optimisticAggressiveArrow ?? gameState?.lastAggressiveMove ?? null;
+        : optimisticAggressiveArrow ?? serverAggressiveArrow;
 
     const currentGameState = gameState;
 
@@ -40,11 +59,19 @@ export function useMoveController({gameState, makeMove}: useMoveControllerParams
         if (!gameState) {
             setOptimisticPassiveArrow(null);
             setOptimisticAggressiveArrow(null);
+            setDismissedLastAggressiveArrow(null);
             return;
         }
 
         setOptimisticPassiveArrow(null);
         setOptimisticAggressiveArrow(null);
+
+        if (
+            dismissedLastAggressiveArrow &&
+            !sameMove(dismissedLastAggressiveArrow, gameState.lastAggressiveMove)
+        ) {
+            setDismissedLastAggressiveArrow(null);
+        }
     }, [gameState]);
 
     async function handleCellClick(
@@ -101,6 +128,7 @@ export function useMoveController({gameState, makeMove}: useMoveControllerParams
             if (isAggressiveMove(currentGameState.turnPhase)) {
                 setOptimisticAggressiveArrow(move);
             } else {
+                setDismissedLastAggressiveArrow(currentGameState.lastAggressiveMove ?? null);
                 setOptimisticPassiveArrow(move);
                 setOptimisticAggressiveArrow(null);
             }
@@ -109,6 +137,10 @@ export function useMoveController({gameState, makeMove}: useMoveControllerParams
 
             setFirstSelection(null);
             return;
+        }
+
+        if (!isAggressiveMove(currentGameState.turnPhase)) {
+            setDismissedLastAggressiveArrow(currentGameState.lastAggressiveMove ?? null);
         }
 
         setFirstSelection(cellSelection);
