@@ -45,7 +45,7 @@ export function buildMove(
     };
 }
 
-export function isOwnBoard(boardId: BoardId, sideToMove: PlayerColor | undefined): boolean {
+export function isOwnBoard(boardId: BoardId, sideToMove: PlayerColor): boolean {
     return boardId.startsWith(sideToMove);
 }
 
@@ -53,8 +53,7 @@ export function isAggressiveMove(turnPhase: TurnPhase):boolean{
     return turnPhase.includes("AGGRESSIVE")
 }
 
-export function getSideToMove(turnPhase: TurnPhase | undefined):PlayerColor | undefined{
-    if (!turnPhase) return undefined;
+export function getSideToMove(turnPhase: TurnPhase ):PlayerColor {
    return turnPhase.startsWith("WHITE") ? "WHITE": "BLACK"
 
 }
