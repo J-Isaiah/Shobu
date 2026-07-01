@@ -8,7 +8,6 @@ import com.shobu.domain.errors.InvalidMoveException;
 import com.shobu.domain.errors.PieceOutOfBoundsException;
 import com.shobu.domain.moveData.Move;
 
-//TODO: Make sure that you cannot push a player during your passive move
 public class Board {
     private record MovePath(
             int oneRow,

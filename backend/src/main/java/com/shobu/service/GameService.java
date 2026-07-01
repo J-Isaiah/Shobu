@@ -71,7 +71,10 @@ public class GameService {
         }
 
 
-        return new GameState(gameId, updatedGame.getTurnPhase(), updatedGame.getBoards(), winner, generator.generateLegalMovesByBoardAndPosition(), generator.getReturnedPassiveMove());
+
+
+
+        return new GameState(gameId, updatedGame.getTurnPhase(), updatedGame.getBoards(), winner, generator.generateLegalMovesByBoardAndPosition(), updatedGame.getPendingPassiveMove(), updatedGame.getLastAggressiveMove());
 
     }
 
@@ -121,7 +124,7 @@ public class GameService {
         GenerateLegalMoves generator = new GenerateLegalMoves(game);
 
 
-        return new GameState(gameId, game.getTurnPhase(), game.getBoards(), game.getWinner(), generator.generateLegalMovesByBoardAndPosition(), generator.getReturnedPassiveMove());
+        return new GameState(gameId, game.getTurnPhase(), game.getBoards(), game.getWinner(), generator.generateLegalMovesByBoardAndPosition(), game.getPendingPassiveMove(), game.getLastAggressiveMove());
 
     }
 
