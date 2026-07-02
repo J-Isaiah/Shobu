@@ -1,4 +1,5 @@
 .board {
+    position: relative;
     transition: transform 160ms ease, box-shadow 160ms ease;
     display: grid;
     grid-template-columns: repeat(4, clamp(40px,8vw,64px));
