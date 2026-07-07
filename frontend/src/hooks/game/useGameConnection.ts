@@ -57,6 +57,7 @@ export function useGameConnection(gameId: string | undefined) {
             setNetworkError("Missing game id.");
             return;
         }
+        // TODO: remove player ids that are not julia and isaiahs
         const playerId = localStorage.getItem("playerId");
 
         if (!playerId) {

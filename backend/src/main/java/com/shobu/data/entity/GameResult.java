@@ -13,11 +13,45 @@ public class GameResult {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int moveCount;
     private UUID whitePlayerId;
     private UUID blackPlayerId;
     private UUID winningPlayerId;
 
     @Enumerated(EnumType.STRING)
     private Stone winner;
+
+    protected GameResult() {
+    }
+
+    public GameResult(
+            UUID whitePlayerId,
+            UUID blackPlayerId,
+            UUID winningPlayerId,
+            Stone winner
+    ) {
+        this.whitePlayerId = whitePlayerId;
+        this.blackPlayerId = blackPlayerId;
+        this.winningPlayerId = winningPlayerId;
+        this.winner = winner;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public UUID getWhitePlayerId() {
+        return whitePlayerId;
+    }
+
+    public UUID getBlackPlayerId() {
+        return blackPlayerId;
+    }
+
+    public UUID getWinningPlayerId() {
+        return winningPlayerId;
+    }
+
+    public Stone getWinner() {
+        return winner;
+    }
 }

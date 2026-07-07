@@ -6,11 +6,13 @@ import com.shobu.api.dto.response.JoinGameResponse;
 import com.shobu.api.dto.response.StartGameResponse;
 import com.shobu.api.errors.apiExceptions.GameFullException;
 import com.shobu.api.errors.apiExceptions.GameNotFoundException;
+import com.shobu.data.entity.GameResult;
 import com.shobu.domain.Game;
 import com.shobu.domain.GameSession;
 import com.shobu.domain.GenerateLegalMoves;
 import com.shobu.domain.enums.Stone;
 import com.shobu.domain.errors.InvalidMoveException;
+import com.shobu.properties.PlayerProperties;
 import com.shobu.utils.GenerateShortCode;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +23,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class GameService {
     private final Map<String, GameSession> games = new ConcurrentHashMap<>();
-    private final GenerateShortCode generateShortCode;
 
-    public GameService(GenerateShortCode generateShortCode) {
+    private final GenerateShortCode generateShortCode;
+    private final DataService dataService;
+    private final PlayerProperties playerProperties;
+
+    public GameService(GenerateShortCode generateShortCode, DataService dataService, PlayerProperties playerProperties) {
         this.generateShortCode = generateShortCode;
+        this.dataService = dataService;
+        this.playerProperties = playerProperties;
     }
 
     public StartGameResponse startGame() {
@@ -66,12 +73,25 @@ public class GameService {
 
         if (winner != null) {
             games.remove(gameId);
+
+            UUID whitePlayerId = knownPlayerOrNull(gameSession.getWhitePlayerId());
+            UUID blackPlayerId = knownPlayerOrNull(gameSession.getBlackPlayerId());
+
+            UUID winningPlayerId = winner == Stone.WHITE
+                    ? whitePlayerId
+                    : blackPlayerId;
+
+            GameResult gameResult = new GameResult(
+                    whitePlayerId,
+                    blackPlayerId,
+                    winningPlayerId,
+                    winner
+            );
+
+            dataService.saveGameResult(gameResult);
         } else {
             games.put(gameId, gameSession);
         }
-
-
-
 
 
         return new GameState(gameId, updatedGame.getTurnPhase(), updatedGame.getBoards(), winner, generator.generateLegalMovesByBoardAndPosition(), updatedGame.getPendingPassiveMove(), updatedGame.getLastAggressiveMove());
@@ -131,6 +151,19 @@ public class GameService {
     private void debugLookup(String method, String gameId) {
         System.out.println(method + " lookup: [" + gameId + "]");
         System.out.println("active games: " + games.keySet());
+    }
+
+    private UUID knownPlayerOrNull(UUID playerId) {
+        if (playerId == null) {
+            return null;
+        }
+
+        if (playerId.equals(playerProperties.isaiahPlayerId) ||
+                playerId.equals(playerProperties.juliaPlayerId)) {
+            return playerId;
+        }
+
+        return null;
     }
 
 }
