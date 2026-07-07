@@ -1,6 +1,7 @@
 import {useNavigate} from "react-router-dom";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import "./GameOptionMenu.css"
+import type {GetStatsResponse} from "../types/data/stats.ts";
 
 function extractGameId(input: string): string {
     return input.split("/").pop() ?? "";
@@ -10,19 +11,27 @@ export default function GameOptionMenu() {
     const navigate = useNavigate();
     const [joinString, setJoinString] = useState("")
 
+    const [stats, setStats] = useState<GetStatsResponse | null>(null);
+
+    useEffect(() => {
+        async function fetchStats() {
+            const response = await fetch("/api/stats");
+            const data: GetStatsResponse = await response.json();
+            setStats(data);
+            console.log(data)
+        }
+
+
+        fetchStats();
+    }, []);
+
     const startGame = async () => {
-        const payload = {
-            startSide: "WHITE_PASSIVE",
-            player1: {"userId": "1497e843-a462-4ec1-ad2d-9dc85b0a694a", "userName": "Isaiah"},
-            player2: {"userId": "1497e843-a462-4ec1-ad2d-9dc85b0a694a", "userName": "NotISaiah"}
-        };
 
         const response = await fetch("/api/game/startGame", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
@@ -43,7 +52,7 @@ export default function GameOptionMenu() {
 
         const response = await fetch(`/api/game/${gameId}/joinGame`, {
             method: "POST",
-            headers: {"Ccontent-Type": "application/json"}
+            headers: {"Content-Type": "application/json"}
         })
 
         const {playerId, playerColor} = await response.json();
@@ -60,6 +69,8 @@ export default function GameOptionMenu() {
                     SHŌBU
                 </div>
             </div>
+
+            <div className="wood-pattern game-count">Over <b>{stats?.totalGamesPlayed}</b> Games Played</div>
             <div>
                 <button className="wood-pattern start-game" onClick={startGame}>Start Game</button>
             </div>
@@ -80,7 +91,26 @@ export default function GameOptionMenu() {
             <div>
                 <button className="wood-pattern join-button" onClick={joinGame}>Join Game</button>
             </div>
+            <div className="stats-container">
+                <div className="wood-pattern win-stats">
+                    <div className="win-text">
+                        Isaiah's Wins:
+                    </div>
+                    <div className="win-number">
+                        {stats?.isaiahWins ?? 0}
+
+                    </div>
+                </div>
+
+                <div className="wood-pattern win-stats">
+                    <div className="win-text">
+                        Julia's Wins:
+                    </div>
+                    <div className="win-number">{stats?.juliaWins ?? 0}</div>
+                </div>
+
+
+            </div>
         </div>
     </>
-
 }

@@ -1,4 +1,4 @@
-package com.shobu;
+package com.shobu.api;
 
 import com.shobu.api.dto.response.GetStatsResponse;
 import com.shobu.service.DataService;

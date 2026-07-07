@@ -108,3 +108,24 @@
             0 12px 24px rgba(0, 0, 0, 0.35),
             0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+.stats-container{
+    margin: .8rem;
+    display: flex;
+}
+.win-number{
+    font-size: xx-large;
+}
+.win-stats{
+    display: flex;
+    flex-direction: column;
+    width: 9rem;
+    padding: .5rem;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+    margin:1rem;
+}
+.game-count{
+    padding: .25rem;
+}
