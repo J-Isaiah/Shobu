@@ -129,3 +129,25 @@
 .game-count{
     padding: .25rem;
 }
+
+.login{
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    font-weight: bold;
+    width: 5rem;
+    height: 2rem;
+    margin: .5rem;
+
+}
+
+.login:hover{
+    transform: translateY(-4px);
+
+}
+
+.login-popup{
+    
+}

@@ -2,6 +2,7 @@ import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import "./GameOptionMenu.css"
 import type {GetStatsResponse} from "../types/data/stats.ts";
+import LoginPopup from "../components/mainPaage/LoginPopup.tsx";
 
 function extractGameId(input: string): string {
     return input.split("/").pop() ?? "";
@@ -10,6 +11,7 @@ function extractGameId(input: string): string {
 export default function GameOptionMenu() {
     const navigate = useNavigate();
     const [joinString, setJoinString] = useState("")
+    const [showLogin, setShowLogin] = useState(false)
 
     const [stats, setStats] = useState<GetStatsResponse | null>(null);
 
@@ -63,6 +65,8 @@ export default function GameOptionMenu() {
 
     }
     return <>
+        {showLogin && <LoginPopup onClose={() => setShowLogin(false)} />}
+        <button className="wood-pattern login" onClick={()=>{setShowLogin(true)}}>LogIn</button>
         <div className="home-page">
             <div className="title-container wood-pattern">
                 <div className="title">
