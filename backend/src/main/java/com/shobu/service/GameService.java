@@ -1,6 +1,7 @@
 package com.shobu.service;
 
 import com.shobu.api.dto.request.MakeMoveRequest;
+import com.shobu.api.dto.request.StartGameRequest;
 import com.shobu.api.dto.response.GameState;
 import com.shobu.api.dto.response.JoinGameResponse;
 import com.shobu.api.dto.response.StartGameResponse;
@@ -34,8 +35,10 @@ public class GameService {
         this.playerProperties = playerProperties;
     }
 
-    public StartGameResponse startGame() {
-        UUID whitePlayerId = UUID.randomUUID();
+    public StartGameResponse startGame(StartGameRequest request) {
+        UUID whitePlayerId = request.startPlayer() != null
+                ? request.startPlayer().userId()
+                : UUID.randomUUID();
         GameSession gameSession = new GameSession(whitePlayerId);
         String id = generateShortCode.generate();
         Game game = Game.start(Stone.WHITE);

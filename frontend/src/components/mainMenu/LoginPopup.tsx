@@ -1,8 +1,10 @@
 import "./LoginPopup.css"
 import * as React from "react";
 import {useState} from "react";
+import type {AuthUser} from "../../types/ApiResponses/AuthResponses.ts";
 
 type LoginModalProps = {
+    setAuthUser: React.Dispatch<React.SetStateAction<AuthUser|null>>
     onClose: () => void;
 };
 
@@ -12,7 +14,7 @@ type LoginForm = {
 }
 type AuthMode = "SIGNUP" | "LOGIN"
 
-export default function LoginPopup({onClose}: LoginModalProps) {
+export default function LoginPopup({setAuthUser,onClose}: LoginModalProps) {
     const [loginInfo, setLoginInfo] = useState<LoginForm>({username: "", password: ""})
     const [authMode, setAuthMode] = useState<AuthMode>("LOGIN")
 
@@ -34,8 +36,10 @@ export default function LoginPopup({onClose}: LoginModalProps) {
             },
             body: JSON.stringify(loginInfo),
         })
+        const authUser = await response.json()
+        localStorage.setItem("authUser", JSON.stringify(authUser))
+        setAuthUser(authUser)
 
-        console.log(await response.json())
         if (response.ok) {
             onClose()
         }

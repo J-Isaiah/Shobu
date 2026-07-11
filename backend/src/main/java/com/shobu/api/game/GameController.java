@@ -2,6 +2,7 @@ package com.shobu.api.game;
 
 import java.util.UUID;
 
+import com.shobu.api.dto.request.StartGameRequest;
 import com.shobu.api.dto.response.JoinGameResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +21,8 @@ public class GameController {
     }
 
     @PostMapping("/startGame")
-    public StartGameResponse startGame() {
-        return gameService.startGame();
+    public StartGameResponse startGame(@RequestBody StartGameRequest request) {
+        return gameService.startGame(request);
 
     }
 

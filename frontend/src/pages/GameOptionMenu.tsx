@@ -3,6 +3,8 @@ import {useEffect, useState} from "react";
 import "./GameOptionMenu.css"
 import type {GetStatsResponse} from "../types/data/stats.ts";
 import LoginPopup from "../components/mainMenu/LoginPopup.tsx";
+import type {AuthUser} from "../types/ApiResponses/AuthResponses.ts";
+import {toTitleCase} from "../utils/toTitleCase.ts";
 
 function extractGameId(input: string): string {
     return input.split("/").pop() ?? "";
@@ -12,8 +14,16 @@ export default function GameOptionMenu() {
     const navigate = useNavigate();
     const [joinString, setJoinString] = useState("")
     const [showLogin, setShowLogin] = useState(false)
+    const [selectedStartStone] = useState("WHITE")
+    const [authUser, setAuthUser] = useState<AuthUser | null>(
+        getStoredAuthUser
+    );
 
     const [stats, setStats] = useState<GetStatsResponse | null>(null);
+
+
+
+
 
     useEffect(() => {
         async function fetchStats() {
@@ -34,6 +44,11 @@ export default function GameOptionMenu() {
             headers: {
                 "Content-Type": "application/json",
             },
+            body: JSON.stringify({
+                startSide: selectedStartStone,
+                startPlayer: {userId: authUser?.playerInternalId, userName: authUser?.playerName}
+
+            })
         });
 
         if (!response.ok) {
@@ -65,8 +80,11 @@ export default function GameOptionMenu() {
 
     }
     return <>
-        {showLogin && <LoginPopup onClose={() => setShowLogin(false)} />}
-        <button className="wood-pattern login" onClick={()=>{setShowLogin(true)}}>LogIn</button>
+        {showLogin && <LoginPopup setAuthUser={setAuthUser} onClose={() => setShowLogin(false)}/>}
+        <button disabled={!!authUser} className="wood-pattern login" onClick={() => {
+            setShowLogin(true)
+        }}>{
+            authUser != null ? `Welcome: ${toTitleCase(authUser.playerName)}` : "LogIn"}</button>
         <div className="home-page">
             <div className="title-container wood-pattern">
                 <div className="title">
@@ -117,4 +135,20 @@ export default function GameOptionMenu() {
             </div>
         </div>
     </>
+}
+
+function getStoredAuthUser(): AuthUser | null {
+    const value = localStorage.getItem("authUser");
+    console.log(value)
+
+    if (!value) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(value) as AuthUser;
+    } catch {
+        localStorage.removeItem("authUser");
+        return null;
+    }
 }
