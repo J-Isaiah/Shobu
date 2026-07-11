@@ -23,7 +23,12 @@ function sameMove(a: Move | null | undefined, b: Move | null | undefined): boole
 }
 
 export function useMoveController({gameState, makeMove}: useMoveControllerParams) {
-    const playerColor = localStorage.getItem("playerColor");
+    let playerColor: string | null;
+
+    const gameInfo = localStorage.getItem(`game:${gameState?.gameId}`);
+    if (gameInfo != null) {
+        playerColor = JSON.parse(gameInfo).playerColor
+    }
 
     const [uiError, setUiError] = useState<string | null>(null);
     const [firstSelection, setFirstSelection] = useState<CellSelection | null>(null);

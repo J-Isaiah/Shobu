@@ -42,6 +42,7 @@ type Props = {
         row: BoardCoordinate,
         col: BoardCoordinate
     ) => boolean;
+    gameId: String;
 };
 
 export default function Board({
@@ -54,10 +55,15 @@ export default function Board({
                                   isAvailableCellToMove,
                                   passiveArrow,
                                   aggressiveArrow,
+                                  gameId
                               }: Props) {
     const {boardRef, measurements} = useBoardMeasurements();
+    let playerColor;
 
-    const playerColor = localStorage.getItem("playerColor");
+    const gameInfo= localStorage.getItem(`game:${gameId}`);
+    if (gameInfo != null) {
+         playerColor = JSON.parse(gameInfo).playerColor
+    }
     const shouldRotate = playerColor === "BLACK";
 
     const rowIndexes = shouldRotate ? [3, 2, 1, 0] : [0, 1, 2, 3];
@@ -81,7 +87,6 @@ export default function Board({
                             measurements.cellSize
                         )}
                         to={getCellCenter(
-
                             toDisplayCoord(end.row, shouldRotate),
                             toDisplayCoord(end.col, shouldRotate),
                             measurements.cellSize
@@ -103,7 +108,6 @@ export default function Board({
                             measurements.cellSize
                         )}
                         to={getCellCenter(
-
                             toDisplayCoord(end.row, shouldRotate),
                             toDisplayCoord(end.col, shouldRotate),
                             measurements.cellSize

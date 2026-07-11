@@ -57,9 +57,7 @@ export default function GameOptionMenu() {
         }
 
         const {gameId, playerId, playerColor} = await response.json();
-        localStorage.setItem("playerId", playerId);
-
-        localStorage.setItem("playerColor", playerColor);
+        localStorage.setItem(`game:${gameId}`, JSON.stringify({playerId, playerColor}))
 
         navigate(`/game/${gameId}`);
     };
@@ -73,8 +71,7 @@ export default function GameOptionMenu() {
         })
 
         const {playerId, playerColor} = await response.json();
-        localStorage.setItem("playerId", playerId)
-        localStorage.setItem("playerColor", playerColor)
+        localStorage.setItem(`game:${gameId}`,JSON.stringify({playerId, playerColor}))
         navigate(`/game/${gameId}`)
 
 

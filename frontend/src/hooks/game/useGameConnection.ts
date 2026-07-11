@@ -58,7 +58,12 @@ export function useGameConnection(gameId: string | undefined) {
             return;
         }
         // TODO: remove player ids that are not julia and isaiahs
-        const playerId = localStorage.getItem("playerId");
+        let playerId;
+
+        const gameInfo= localStorage.getItem(`game:${gameId}`);
+        if (gameInfo != null) {
+            playerId = JSON.parse(gameInfo).playerId
+        }
 
         if (!playerId) {
             throw new Error("Player Id Unknown or invalid")

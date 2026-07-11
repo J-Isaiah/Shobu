@@ -10,8 +10,15 @@ import {getGameStateMessage} from "../utils/game/cleanMoveDialog.ts";
 
 export default function GameWindow() {
     const {gameId} = useParams();
-    const playerColor = localStorage.getItem("playerColor")
+    if (!gameId) {
+        throw new Error("Missing gameId");
+    }
+    let playerColor;
 
+    const gameInfo= localStorage.getItem(`game:${gameId}`);
+    if (gameInfo != null) {
+        playerColor = JSON.parse(gameInfo).playerColor
+    }
 
     const {makeMove, gameState, networkError, isPendingMove} = useGameConnection(gameId)
 
@@ -65,6 +72,7 @@ export default function GameWindow() {
                     isHighlightedStone={isMovableStone}
                     isHighlightedCell={isSelectedStone}
                     isAvailableCellToMove={isAvailableCellToMove}
+                    gameId={gameId}
                 />
 
                 <Board
@@ -78,6 +86,8 @@ export default function GameWindow() {
                     isAvailableCellToMove={isAvailableCellToMove}
                     isHighlightedCell={isSelectedStone}
                     isHighlightedStone={isMovableStone}
+
+                    gameId={gameId}
                 />
 
                 <Board
@@ -91,6 +101,8 @@ export default function GameWindow() {
                     isAvailableCellToMove={isAvailableCellToMove}
                     isHighlightedCell={isSelectedStone}
                     isHighlightedStone={isMovableStone}
+
+                    gameId={gameId}
                 />
 
                 <Board
@@ -103,6 +115,8 @@ export default function GameWindow() {
                     isHighlightedStone={isMovableStone}
                     isHighlightedCell={isSelectedStone}
                     isAvailableCellToMove={isAvailableCellToMove}
+
+                    gameId={gameId}
                 />
 
             </div>

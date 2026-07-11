@@ -2,16 +2,20 @@ import {BoardId} from "../../enums/game.ts";
 import type {CellSelection} from "../../types/game/Cell.ts";
 import type {BoardCoordinate, GameState} from "../../types/game/MoveTypes.ts";
 import {getMoveEnd, getSideToMove, isAggressiveMove} from "../../utils/game/movePhase.ts";
-import { canSelectStone } from "../../utils/game/canSelectStone.ts";
+import {canSelectStone} from "../../utils/game/canSelectStone.ts";
 
-function useMoveHighlighting(gameState: GameState | null,  firstSelection: CellSelection | null, isPendingMove: boolean) {
-    const playerColor = localStorage.getItem("playerColor")
+function useMoveHighlighting(gameState: GameState | null, firstSelection: CellSelection | null, isPendingMove: boolean) {
+    let playerColor: string | null;
 
+    const gameInfo = localStorage.getItem(`game:${gameState?.gameId}`);
+    if (gameInfo != null) {
+        playerColor = JSON.parse(gameInfo).playerColor
+    }
 
     function isSelectedStone(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate): boolean {
         // Highlights Selected Stone
         if (!gameState) return false
-        if (playerColor != getSideToMove(gameState.turnPhase)){
+        if (playerColor != getSideToMove(gameState.turnPhase)) {
             return false
         }
         return firstSelection?.boardId == boardId && firstSelection.position.row == row && firstSelection.position.col == col;
@@ -20,7 +24,7 @@ function useMoveHighlighting(gameState: GameState | null,  firstSelection: CellS
 
     function isAvailableCellToMove(boardId: BoardId, row: BoardCoordinate, col: BoardCoordinate) {
         if (!gameState) return false
-        if (playerColor != getSideToMove(gameState.turnPhase)){
+        if (playerColor != getSideToMove(gameState.turnPhase)) {
             return false
         }
 
