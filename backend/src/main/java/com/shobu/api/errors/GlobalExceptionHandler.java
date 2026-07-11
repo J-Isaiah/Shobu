@@ -2,6 +2,8 @@ package com.shobu.api.errors;
 
 import com.shobu.api.errors.apiExceptions.GameFullException;
 import com.shobu.api.errors.apiExceptions.GameNotFoundException;
+import com.shobu.api.errors.apiExceptions.InvalidLoginException;
+import com.shobu.api.errors.apiExceptions.SignUpException;
 import com.shobu.domain.errors.CannotPushOwnPieceException;
 import com.shobu.domain.errors.InvalidMoveException;
 import com.shobu.domain.errors.PieceOutOfBoundsException;
@@ -55,5 +57,15 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse(
                 "GAME_FULL", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(InvalidLoginException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidLoginException(InvalidLoginException ex){
+        ErrorResponse response = new ErrorResponse("INVALID_LOGIN", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+    @ExceptionHandler(SignUpException.class)
+    public ResponseEntity<ErrorResponse> handleSignupException(SignUpException ex){
+        return new ResponseEntity<>(new ErrorResponse("SIGNUP_ERROR", ex.getMessage()),   HttpStatus.BAD_REQUEST);
     }
 }

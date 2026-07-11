@@ -2,7 +2,7 @@ import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import "./GameOptionMenu.css"
 import type {GetStatsResponse} from "../types/data/stats.ts";
-import LoginPopup from "../components/mainPaage/LoginPopup.tsx";
+import LoginPopup from "../components/mainMenu/LoginPopup.tsx";
 
 function extractGameId(input: string): string {
     return input.split("/").pop() ?? "";

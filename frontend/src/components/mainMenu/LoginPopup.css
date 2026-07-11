@@ -74,7 +74,23 @@
     box-shadow: 0 7px 0 rgba(35, 18, 8, 0.8);
 }
 
+
 .form-login:active {
     transform: translateY(3px);
     box-shadow: 0 2px 0 rgba(35, 18, 8, 0.8);
+}
+.toggle-auth {
+    padding: 0;
+    border: none;
+    background: none;
+
+    color: rgba(35, 18, 8, 0.8);
+    font-size: 0.9rem;
+    text-decoration: underline;
+
+    cursor: pointer;
+}
+
+.toggle-auth:hover {
+    color: rgba(20, 10, 5, 1);
 }
