@@ -54,6 +54,14 @@ export default function GameOptionMenu() {
     }, []);
 
     return <>
+        <a
+            className="how-to-play wood-pattern"
+            href="https://www.youtube.com/watch?v=qE8kyHyBlAo"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            How To Play?
+        </a>
         {showLogin && <LoginPopup setAuthUser={setAuthUser} onClose={() => setShowLogin(false)}/>}
         <button disabled={!!authUser} className="wood-pattern login" onClick={() => {
             setShowLogin(true)

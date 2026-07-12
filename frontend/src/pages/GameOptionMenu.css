@@ -151,3 +151,20 @@
 .login-popup{
     
 }
+.how-to-play{
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    right:0;
+    height: 2rem;
+    margin: .5rem;
+    padding: .5rem;
+    font-weight: bold;
+
+}
+
+.how-to-play:hover{
+    transform: translateY(-4px);
+}
