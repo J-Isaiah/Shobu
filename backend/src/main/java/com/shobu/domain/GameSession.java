@@ -3,12 +3,16 @@ package com.shobu.domain;
 import java.util.UUID;
 
 public class GameSession {
-    private final UUID whitePlayerId;
+    private  UUID whitePlayerId;
     private UUID blackPlayerId;
     private Game game;
 
     public UUID getWhitePlayerId() {
         return whitePlayerId;
+    }
+
+    public void setWhitePlayerId(UUID whitePlayerId) {
+        this.whitePlayerId = whitePlayerId;
     }
 
     public GameSession(UUID whitePlayerId) {
@@ -30,4 +34,5 @@ public class GameSession {
     public void setGame(Game game) {
         this.game = game;
     }
+
 }

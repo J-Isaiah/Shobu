@@ -1,13 +1,17 @@
 package com.shobu.service;
 
 import com.shobu.api.dto.request.MakeMoveRequest;
+import com.shobu.api.dto.request.RematchRequest;
 import com.shobu.api.dto.request.StartGameRequest;
 import com.shobu.api.dto.response.GameState;
 import com.shobu.api.dto.response.JoinGameResponse;
+import com.shobu.api.dto.response.RematchResponse;
 import com.shobu.api.dto.response.StartGameResponse;
 import com.shobu.api.errors.apiExceptions.GameFullException;
 import com.shobu.api.errors.apiExceptions.GameNotFoundException;
+import com.shobu.api.errors.apiExceptions.PlayerNotInGameException;
 import com.shobu.data.entity.GameResult;
+import com.shobu.domain.CreatedGame;
 import com.shobu.domain.Game;
 import com.shobu.domain.GameSession;
 import com.shobu.domain.GenerateLegalMoves;
@@ -29,32 +33,34 @@ public class GameService {
 
     private final GenerateShortCode generateShortCode;
     private final DataService dataService;
-    private final PlayerProperties playerProperties;
     private static final Logger log = LoggerFactory.getLogger(GameService.class);
 
     public GameService(GenerateShortCode generateShortCode, DataService dataService, PlayerProperties playerProperties) {
         this.generateShortCode = generateShortCode;
         this.dataService = dataService;
-        this.playerProperties = playerProperties;
     }
 
     public StartGameResponse startGame(StartGameRequest request) {
+        CreatedGame created = createEmptyGame();
+
         UUID whitePlayerId =
-                request.startPlayer() != null &&
-                        request.startPlayer().userId() != null
+                request.startPlayer() != null
+                        && request.startPlayer().userId() != null
                         ? request.startPlayer().userId()
                         : UUID.randomUUID();
 
-        GameSession gameSession = new GameSession(whitePlayerId);
-        String id = generateShortCode.generate();
-        Game game = Game.start(Stone.WHITE);
-        gameSession.setGame(game);
+        created.session().setWhitePlayerId(whitePlayerId);
+
+        Game game = created.session().getGame();
         GenerateLegalMoves generator = new GenerateLegalMoves(game);
 
-
-        games.put(id, gameSession);
-        System.out.println("Created game: [" + id + "]");
-        return new StartGameResponse(whitePlayerId, id, game, generator.generateLegalMovesByBoardAndPosition(), Stone.WHITE);
+        return new StartGameResponse(
+                whitePlayerId,
+                created.gameId(),
+                game,
+                generator.generateLegalMovesByBoardAndPosition(),
+                Stone.WHITE
+        );
     }
 
     public GameState makeMove(String gameId, MakeMoveRequest request) {
@@ -145,6 +151,18 @@ public class GameService {
         games.put(gameId, gameSession);
 
         return new JoinGameResponse(gameId, gameSession.getBlackPlayerId(), buildGameState(gameId, game), Stone.BLACK);
+    }
+
+
+    private CreatedGame createEmptyGame() {
+        String gameId = generateShortCode.generate();
+        Game game = Game.start(Stone.WHITE);
+
+        GameSession session = new GameSession(null);
+        session.setGame(game);
+        games.put(gameId, session);
+
+        return new CreatedGame(gameId, session);
     }
 
     private GameState buildGameState(String gameId, Game game) {
