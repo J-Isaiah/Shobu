@@ -7,6 +7,7 @@ import type {AuthUser} from "../types/ApiResponses/AuthResponses.ts";
 import {toTitleCase} from "../utils/toTitleCase.ts";
 import {joinGame, startGame} from "../api/game.ts";
 import type {StoneColor} from "../types/game/MoveTypes.ts";
+import {getStoredAuthUser} from "../utils/auth/auth.ts";
 
 function extractGameId(input: string): string {
     return input.split("/").pop() ?? "";
@@ -110,18 +111,3 @@ export default function GameOptionMenu() {
     </>
 }
 
-function getStoredAuthUser(): AuthUser | null {
-    const value = localStorage.getItem("authUser");
-    console.log(value)
-
-    if (!value) {
-        return null;
-    }
-
-    try {
-        return JSON.parse(value) as AuthUser;
-    } catch {
-        localStorage.removeItem("authUser");
-        return null;
-    }
-}

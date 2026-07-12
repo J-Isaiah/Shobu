@@ -39,7 +39,12 @@ public class GameService {
     }
 
     public StartGameResponse startGame(StartGameRequest request) {
-        UUID whitePlayerId = request.startPlayer() != null ? request.startPlayer().userId() : UUID.randomUUID();
+        UUID whitePlayerId =
+                request.startPlayer() != null &&
+                        request.startPlayer().userId() != null
+                        ? request.startPlayer().userId()
+                        : UUID.randomUUID();
+
         GameSession gameSession = new GameSession(whitePlayerId);
         String id = generateShortCode.generate();
         Game game = Game.start(Stone.WHITE);

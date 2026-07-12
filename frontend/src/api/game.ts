@@ -17,7 +17,10 @@ export async function joinGame({gameId, authUser}: JoinGameProps) {
         })
     })
 
-    const {playerId, playerColor} = await response.json();
+    const {playerId, playerColor, code} = await response.json();
+    if (code ==  "GAME_FULL"){
+        return
+    }
     localStorage.setItem(`game:${gameId}`, JSON.stringify({playerId, playerColor}))
 
     return gameId
@@ -39,13 +42,15 @@ export async function startGame({authUser, selectedStartStone}: StartGameProps) 
 
         })
     });
+    const jsonResponse =  await response.json();
 
     if (!response.ok) {
-        const error = await response.json();
+        const error = jsonResponse
         console.log(error);
     }
 
-    const {gameId, playerId, playerColor} = await response.json();
+    const {gameId, playerId, playerColor} = jsonResponse
+    console.log(jsonResponse)
     localStorage.setItem(`game:${gameId}`, JSON.stringify({playerId, playerColor}))
     return gameId
 

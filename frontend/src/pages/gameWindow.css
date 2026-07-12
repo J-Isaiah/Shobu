@@ -129,3 +129,22 @@
         url("/MobileBg.png");
     }
 }
+.game-error-message {
+    width: min(32rem, 90vw);
+    margin: 0.75rem auto;
+    padding: 0.75rem 1rem;
+
+    border: 1px solid rgba(130, 20, 20, 0.8);
+    border-radius: 0.4rem;
+
+    background: rgba(90, 10, 10, 0.9);
+    color: white;
+    text-align: center;
+}
+
+.game-error-card {
+    width: min(28rem, 90vw);
+    margin: 4rem auto;
+    padding: 2rem;
+    text-align: center;
+}
