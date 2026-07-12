@@ -5,6 +5,8 @@ import type {GetStatsResponse} from "../types/data/stats.ts";
 import LoginPopup from "../components/logIn/LoginPopup.tsx";
 import type {AuthUser} from "../types/ApiResponses/AuthResponses.ts";
 import {toTitleCase} from "../utils/toTitleCase.ts";
+import {joinGame, startGame} from "../api/game.ts";
+import type {StoneColor} from "../types/game/MoveTypes.ts";
 
 function extractGameId(input: string): string {
     return input.split("/").pop() ?? "";
@@ -14,7 +16,7 @@ export default function GameOptionMenu() {
     const navigate = useNavigate();
     const [joinString, setJoinString] = useState("")
     const [showLogin, setShowLogin] = useState(false)
-    const [selectedStartStone] = useState("WHITE")
+    const [selectedStartStone] = useState<StoneColor>("WHITE")
     const [authUser, setAuthUser] = useState<AuthUser | null>(
         getStoredAuthUser
     );
@@ -23,7 +25,20 @@ export default function GameOptionMenu() {
 
 
 
+    const handleJoinGame = async () => {
+        const gameId = extractGameId(joinString);
 
+        await joinGame({gameId, authUser});
+
+        navigate(`/game/${gameId}`);
+    };
+
+    const handleStartGame= async () => {
+
+        const gameId = await startGame({selectedStartStone, authUser});
+
+        navigate(`/game/${gameId}`);
+    };
 
     useEffect(() => {
         async function fetchStats() {
@@ -37,50 +52,6 @@ export default function GameOptionMenu() {
         fetchStats();
     }, []);
 
-    const startGame = async () => {
-
-        const response = await fetch("/api/game/startGame", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                startSide: selectedStartStone,
-                startPlayer: {userId: authUser?.playerInternalId, userName: authUser?.playerName}
-
-            })
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-            console.log(error);
-        }
-
-        const {gameId, playerId, playerColor} = await response.json();
-        localStorage.setItem(`game:${gameId}`, JSON.stringify({playerId, playerColor}))
-
-        navigate(`/game/${gameId}`);
-    };
-
-    const joinGame = async () => {
-        const gameId = extractGameId(joinString)
-
-        const response = await fetch(`/api/game/${gameId}/joinGame`, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-
-            body: JSON.stringify({
-                playerInternalId: authUser?.playerInternalId, userName: authUser?.playerName
-
-            })
-        })
-
-        const {playerId, playerColor} = await response.json();
-        localStorage.setItem(`game:${gameId}`,JSON.stringify({playerId, playerColor}))
-        navigate(`/game/${gameId}`)
-
-
-    }
     return <>
         {showLogin && <LoginPopup setAuthUser={setAuthUser} onClose={() => setShowLogin(false)}/>}
         <button disabled={!!authUser} className="wood-pattern login" onClick={() => {
@@ -96,7 +67,7 @@ export default function GameOptionMenu() {
 
             <div className="wood-pattern game-count">Over <b>{stats?.totalGamesPlayed}</b> Games Played</div>
             <div>
-                <button className="wood-pattern start-game" onClick={startGame}>Start Game</button>
+                <button className="wood-pattern start-game" onClick={handleStartGame}>Start Game</button>
             </div>
             <div className="wood-pattern or-container">
                 <div className="or-text">
@@ -113,7 +84,7 @@ export default function GameOptionMenu() {
                        placeholder={"Game URL"}/>
             </div>
             <div>
-                <button className="wood-pattern join-button" onClick={joinGame}>Join Game</button>
+                <button className="wood-pattern join-button" onClick={handleJoinGame}>Join Game</button>
             </div>
             <div className="stats-container">
                 <div className="wood-pattern win-stats">

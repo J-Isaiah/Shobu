@@ -6,10 +6,18 @@ import {useGameConnection} from "../hooks/game/useGameConnection.ts";
 import useMoveHighlighting from "../hooks/game/useMoveHighlighting.ts";
 import {useMoveController} from "../hooks/game/useMoveValidation.ts";
 import {getGameStateMessage} from "../utils/game/cleanMoveDialog.ts";
+import {useEffect, } from "react";
 
 
 export default function GameWindow() {
     const {gameId} = useParams();
+    useEffect(() => {
+
+
+
+
+    }, []);
+
     if (!gameId) {
         throw new Error("Missing gameId");
     }
