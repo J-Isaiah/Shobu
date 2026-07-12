@@ -67,7 +67,12 @@ export default function GameOptionMenu() {
 
         const response = await fetch(`/api/game/${gameId}/joinGame`, {
             method: "POST",
-            headers: {"Content-Type": "application/json"}
+            headers: {"Content-Type": "application/json"},
+
+            body: JSON.stringify({
+                playerInternalId: authUser?.playerInternalId, userName: authUser?.playerName
+
+            })
         })
 
         const {playerId, playerColor} = await response.json();

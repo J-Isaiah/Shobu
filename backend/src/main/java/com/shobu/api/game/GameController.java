@@ -2,6 +2,7 @@ package com.shobu.api.game;
 
 import java.util.UUID;
 
+import com.shobu.api.dto.request.JoinGameRequest;
 import com.shobu.api.dto.request.StartGameRequest;
 import com.shobu.api.dto.response.JoinGameResponse;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +32,8 @@ public class GameController {
         return gameService.makeMove(gameId, request);
     }
     @PostMapping("{gameId}/joinGame")
-    public JoinGameResponse joinGame(@PathVariable String gameId){
-        return gameService.joinGame(gameId);
+    public JoinGameResponse joinGame(@PathVariable String gameId, @RequestBody JoinGameRequest request){
+        return gameService.joinGame(gameId, request.playerInternalId());
 
     }
 

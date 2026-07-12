@@ -15,6 +15,8 @@ import com.shobu.domain.enums.Stone;
 import com.shobu.domain.errors.InvalidMoveException;
 import com.shobu.properties.PlayerProperties;
 import com.shobu.utils.GenerateShortCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -28,6 +30,7 @@ public class GameService {
     private final GenerateShortCode generateShortCode;
     private final DataService dataService;
     private final PlayerProperties playerProperties;
+    private static final Logger log = LoggerFactory.getLogger(GameService.class);
 
     public GameService(GenerateShortCode generateShortCode, DataService dataService, PlayerProperties playerProperties) {
         this.generateShortCode = generateShortCode;
@@ -36,9 +39,7 @@ public class GameService {
     }
 
     public StartGameResponse startGame(StartGameRequest request) {
-        UUID whitePlayerId = request.startPlayer() != null
-                ? request.startPlayer().userId()
-                : UUID.randomUUID();
+        UUID whitePlayerId = request.startPlayer() != null ? request.startPlayer().userId() : UUID.randomUUID();
         GameSession gameSession = new GameSession(whitePlayerId);
         String id = generateShortCode.generate();
         Game game = Game.start(Stone.WHITE);
@@ -75,23 +76,21 @@ public class GameService {
         Stone winner = updatedGame.getWinner();
 
         if (winner != null) {
+            System.out.println("Winner Spotted");
+            System.out.println(gameSession.getBlackPlayerId());
+            System.out.println(gameSession.getWhitePlayerId());
             games.remove(gameId);
 
             UUID whitePlayerId = knownPlayerOrNull(gameSession.getWhitePlayerId());
             UUID blackPlayerId = knownPlayerOrNull(gameSession.getBlackPlayerId());
 
-            UUID winningPlayerId = winner == Stone.WHITE
-                    ? whitePlayerId
-                    : blackPlayerId;
+            UUID winningPlayerId = winner == Stone.WHITE ? whitePlayerId : blackPlayerId;
+            System.out.println(winningPlayerId);
 
-            GameResult gameResult = new GameResult(
-                    whitePlayerId,
-                    blackPlayerId,
-                    winningPlayerId,
-                    winner
-            );
+            GameResult gameResult = new GameResult(whitePlayerId, blackPlayerId, winningPlayerId, winner);
 
             dataService.saveGameResult(gameResult);
+            System.out.println("Winner posted to db");
         } else {
             games.put(gameId, gameSession);
         }
@@ -119,7 +118,7 @@ public class GameService {
         return buildGameState(gameId, game);
     }
 
-    public JoinGameResponse joinGame(String gameId) {
+    public JoinGameResponse joinGame(String gameId, UUID playerInternalId) {
         debugLookup("joinGame", gameId);
         GameSession gameSession = games.get(gameId);
 
@@ -136,8 +135,8 @@ public class GameService {
             throw new GameFullException(gameId);
 
         }
-        gameSession.setBlackPlayerId(UUID.randomUUID());
-
+        UUID joiningPlayerId = dataService.playerExists(playerInternalId) ? playerInternalId : UUID.randomUUID();
+        gameSession.setBlackPlayerId(joiningPlayerId);
         games.put(gameId, gameSession);
 
         return new JoinGameResponse(gameId, gameSession.getBlackPlayerId(), buildGameState(gameId, game), Stone.BLACK);
@@ -157,16 +156,7 @@ public class GameService {
     }
 
     private UUID knownPlayerOrNull(UUID playerId) {
-        if (playerId == null) {
-            return null;
-        }
-
-        if (playerId.equals(playerProperties.isaiahPlayerId) ||
-                playerId.equals(playerProperties.juliaPlayerId)) {
-            return playerId;
-        }
-
-        return null;
+        return dataService.playerExists(playerId) ? playerId : null;
     }
 
 }
