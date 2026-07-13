@@ -14,8 +14,13 @@
     transform: translateY(-8px);
 }
 
-.board:hover {
+
+.board--player:hover {
     animation: blueGlow 1.8s ease-in-out infinite alternate;
+}
+
+.board--opponent:hover {
+    animation: redGlow 1.8s ease-in-out infinite alternate;
 }
 
 @keyframes blueGlow {
@@ -37,6 +42,7 @@
     width: clamp(40px,8vw,64px);
     height: clamp(40px,8vw,64px);
     background-color: rgba(0, 0, 0, 0.08);}
+
 .board--dark {
     background-color: var(--board-dark);
 
@@ -49,6 +55,20 @@
     background-color: var(--board-light);
 
     background-image: url("/tileable_wood_texture.webp");
+}
+@keyframes redGlow {
+    from {
+        box-shadow:
+                0 0 8px rgba(255, 80, 80, 0.35),
+                0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    to {
+        box-shadow:
+                0 0 28px rgba(255, 80, 80, 0.85),
+                0 0 45px rgba(255, 80, 80, 0.45),
+                0 28px 45px rgba(0, 0, 0, 0.45);
+    }
 }
 
 .board-pattern {

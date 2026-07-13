@@ -153,6 +153,7 @@ export default function GameWindow() {
                 }}
             >
                 <Board
+                    boardOwner={"opponent"}
                     aggressiveArrow={aggressiveArrow}
                     passiveArrow={passiveArrow}
                     color="dark"
@@ -166,6 +167,8 @@ export default function GameWindow() {
                 />
 
                 <Board
+
+                    boardOwner={"opponent"}
                     aggressiveArrow={aggressiveArrow}
                     passiveArrow={passiveArrow}
                     color="light"
@@ -180,6 +183,8 @@ export default function GameWindow() {
 
                 <Board
                     aggressiveArrow={aggressiveArrow}
+
+                    boardOwner={"player"}
                     passiveArrow={passiveArrow}
                     color="light"
                     board={gameState.updatedGameBoards[bottomLight]}
@@ -192,6 +197,8 @@ export default function GameWindow() {
                 />
 
                 <Board
+
+                    boardOwner={"player"}
                     aggressiveArrow={aggressiveArrow}
                     passiveArrow={passiveArrow}
                     color="dark"

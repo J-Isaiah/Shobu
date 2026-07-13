@@ -43,6 +43,7 @@ type Props = {
         col: BoardCoordinate
     ) => boolean;
     gameId: String;
+    boardOwner: "player"|"opponent"
 };
 
 export default function Board({
@@ -55,7 +56,9 @@ export default function Board({
                                   isAvailableCellToMove,
                                   passiveArrow,
                                   aggressiveArrow,
-                                  gameId
+                                  gameId,
+    boardOwner
+
                               }: Props) {
     const {boardRef, measurements} = useBoardMeasurements();
     let playerColor;
@@ -72,7 +75,7 @@ export default function Board({
     return (
         <div
             ref={boardRef}
-            className={`board board--${color} board-pattern`}
+            className={`board board--${color} board-pattern board--${boardOwner}`}
         >
             {passiveArrow?.boardId === boardId && (() => {
                 const end = getMoveEnd(passiveArrow);
