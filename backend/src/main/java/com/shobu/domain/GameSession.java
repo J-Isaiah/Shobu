@@ -3,9 +3,27 @@ package com.shobu.domain;
 import java.util.UUID;
 
 public class GameSession {
+    private String gameId;
     private  UUID whitePlayerId;
     private UUID blackPlayerId;
     private Game game;
+    private GameSession rematchGame;
+
+    public GameSession getRematchGame() {
+        return rematchGame;
+    }
+
+    public String getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
+    }
+
+    public void setRematchGame(GameSession rematchGame) {
+        this.rematchGame = rematchGame;
+    }
 
     public UUID getWhitePlayerId() {
         return whitePlayerId;
@@ -20,7 +38,7 @@ public class GameSession {
     }
 
     public UUID getBlackPlayerId() {
-        return blackPlayerId;
+            return blackPlayerId;
     }
 
     public void setBlackPlayerId(UUID blackPlayerId) {

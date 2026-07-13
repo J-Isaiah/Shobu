@@ -18,7 +18,7 @@ export async function joinGame({gameId, authUser}: JoinGameProps) {
     })
 
     const {playerId, playerColor, code} = await response.json();
-    if (code ==  "GAME_FULL"){
+    if (code == "GAME_FULL") {
         return
     }
     localStorage.setItem(`game:${gameId}`, JSON.stringify({playerId, playerColor}))
@@ -42,7 +42,7 @@ export async function startGame({authUser, selectedStartStone}: StartGameProps) 
 
         })
     });
-    const jsonResponse =  await response.json();
+    const jsonResponse = await response.json();
 
     if (!response.ok) {
         const error = jsonResponse
@@ -55,3 +55,33 @@ export async function startGame({authUser, selectedStartStone}: StartGameProps) 
     return gameId
 
 };
+type Rematch = {
+    authUser: string;
+    gameId: string
+}
+
+export async function rematch({authUser, gameId}: Rematch) {
+    const response = await fetch(`/api/game/${gameId}/rematch`,
+        {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({"playerId": authUser})
+        })
+
+    const jsonResponse  = await response.json()
+
+    let error = "";
+    if (!response.ok){
+        error = jsonResponse
+        console.log((error))
+
+        return {newGameId: null, error}
+    }
+
+    const {newGameId, playerColor, playerId} = jsonResponse
+    console.log(jsonResponse)
+    localStorage.setItem(`game:${newGameId}`, JSON.stringify({playerId, playerColor}))
+    return {newGameId, error}
+
+
+}

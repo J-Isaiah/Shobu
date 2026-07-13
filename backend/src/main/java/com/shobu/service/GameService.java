@@ -43,24 +43,14 @@ public class GameService {
     public StartGameResponse startGame(StartGameRequest request) {
         CreatedGame created = createEmptyGame();
 
-        UUID whitePlayerId =
-                request.startPlayer() != null
-                        && request.startPlayer().userId() != null
-                        ? request.startPlayer().userId()
-                        : UUID.randomUUID();
+        UUID whitePlayerId = request.startPlayer() != null && request.startPlayer().userId() != null ? request.startPlayer().userId() : UUID.randomUUID();
 
         created.session().setWhitePlayerId(whitePlayerId);
 
         Game game = created.session().getGame();
         GenerateLegalMoves generator = new GenerateLegalMoves(game);
 
-        return new StartGameResponse(
-                whitePlayerId,
-                created.gameId(),
-                game,
-                generator.generateLegalMovesByBoardAndPosition(),
-                Stone.WHITE
-        );
+        return new StartGameResponse(whitePlayerId, created.session().getGameId(), game, generator.generateLegalMovesByBoardAndPosition(), Stone.WHITE);
     }
 
     public GameState makeMove(String gameId, MakeMoveRequest request) {
@@ -90,7 +80,6 @@ public class GameService {
             System.out.println("Winner Spotted");
             System.out.println(gameSession.getBlackPlayerId());
             System.out.println(gameSession.getWhitePlayerId());
-            games.remove(gameId);
 
             UUID whitePlayerId = knownPlayerOrNull(gameSession.getWhitePlayerId());
             UUID blackPlayerId = knownPlayerOrNull(gameSession.getBlackPlayerId());
@@ -153,6 +142,34 @@ public class GameService {
         return new JoinGameResponse(gameId, gameSession.getBlackPlayerId(), buildGameState(gameId, game), Stone.BLACK);
     }
 
+    public RematchResponse rematch(String gameId, RematchRequest request) {
+
+        GameSession oldSession = games.get(gameId);
+        if (!request.playerId().equals(oldSession.getWhitePlayerId()) && !request.playerId().equals(oldSession.getBlackPlayerId())) {
+            throw new PlayerNotInGameException(gameId);
+        }
+
+        Stone curStoneColor = oldSession.getBlackPlayerId().equals(request.playerId()) ? Stone.BLACK : Stone.WHITE;
+
+
+        GameSession newSession = oldSession.getRematchGame();
+
+        if (newSession == null) {
+            newSession = createEmptyGame().session();
+            oldSession.setRematchGame(newSession);
+        }
+
+        if (curStoneColor == Stone.WHITE) {
+            newSession.setBlackPlayerId(request.playerId());
+        }
+
+        if (curStoneColor == Stone.BLACK) {
+            newSession.setWhitePlayerId(request.playerId());
+        }
+
+        return new RematchResponse(newSession.getGameId(), curStoneColor == Stone.WHITE ? Stone.BLACK : Stone.WHITE, request.playerId());
+    }
+
 
     private CreatedGame createEmptyGame() {
         String gameId = generateShortCode.generate();
@@ -160,10 +177,12 @@ public class GameService {
 
         GameSession session = new GameSession(null);
         session.setGame(game);
+        session.setGameId(gameId);
         games.put(gameId, session);
 
-        return new CreatedGame(gameId, session);
+        return new CreatedGame(session);
     }
+
 
     private GameState buildGameState(String gameId, Game game) {
         GenerateLegalMoves generator = new GenerateLegalMoves(game);

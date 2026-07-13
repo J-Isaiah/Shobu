@@ -1,4 +1,8 @@
 package com.shobu.api.dto.response;
 
-public record RematchResponse(StartGameResponse startGame, JoinGameResponse joinGame) {
+import com.shobu.domain.enums.Stone;
+
+import java.util.UUID;
+
+public record RematchResponse(String newGameId, Stone playerColor, UUID playerId) {
 }

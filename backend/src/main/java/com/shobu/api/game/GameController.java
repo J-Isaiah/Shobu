@@ -3,8 +3,10 @@ package com.shobu.api.game;
 import java.util.UUID;
 
 import com.shobu.api.dto.request.JoinGameRequest;
+import com.shobu.api.dto.request.RematchRequest;
 import com.shobu.api.dto.request.StartGameRequest;
 import com.shobu.api.dto.response.JoinGameResponse;
+import com.shobu.api.dto.response.RematchResponse;
 import org.springframework.web.bind.annotation.*;
 
 import com.shobu.api.dto.request.MakeMoveRequest;
@@ -36,10 +38,15 @@ public class GameController {
         return gameService.joinGame(gameId, request.playerInternalId());
 
     }
+    @PostMapping("{gameId}/rematch")
+    public RematchResponse rematch(@PathVariable String gameId, @RequestBody RematchRequest request){
+        return gameService.rematch(gameId, request);
+    }
 
     @GetMapping("/{gameId}/getGameState")
     public GameState getGameState(@PathVariable String gameId) {
         return gameService.getGameState(gameId);
     }
+
 
 }

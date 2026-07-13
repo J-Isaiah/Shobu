@@ -1,7 +1,6 @@
 .board {
     position: relative;
-    transition: transform 160ms ease, box-shadow 160ms ease;
-    display: grid;
+    transition: transform 160ms ease;    display: grid;
     grid-template-columns: repeat(4, clamp(40px,8vw,64px));
     grid-template-rows: repeat(4, clamp(40px,8vw,64px));
     gap: clamp(1px, 4px, 4px);
@@ -16,9 +15,22 @@
 }
 
 .board:hover {
-    transform: translateY(-12px);
-    box-shadow: 0 28px 45px rgba(0, 0, 0, 0.45),
-    0 8px 16px rgba(0, 0, 0, 0.3);
+    animation: blueGlow 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes blueGlow {
+    from {
+        box-shadow:
+                0 0 8px rgba(100, 190, 255, 0.35),
+                0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    to {
+        box-shadow:
+                0 0 28px rgba(100, 190, 255, 0.85),
+                0 0 45px rgba(100, 190, 255, 0.45),
+                0 28px 45px rgba(0, 0, 0, 0.45);
+    }
 }
 
 .cell {

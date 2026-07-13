@@ -9,6 +9,7 @@ import {getGameStateMessage} from "../utils/game/cleanMoveDialog.ts";
 import {useEffect, useState,} from "react";
 import {getStoredAuthUser} from "../utils/auth/auth.ts";
 import {joinGame} from "../api/game.ts";
+import GameOver from "../components/gameOverScreen/GameOver.tsx";
 
 
 export default function GameWindow() {
@@ -129,6 +130,7 @@ export default function GameWindow() {
 
     return (
         <div className="game-space" onClick={resetClick}>
+            {gameState.winner && <GameOver gameWinner={gameState.winner} gameState={gameState}></GameOver>}
             <div className="game-id-dialog wood-pattern">
                 <div className="text-dialog">
                     Invite Code: {gameId}
