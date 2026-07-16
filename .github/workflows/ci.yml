@@ -79,7 +79,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd ~/Shobu
+            cd /home/ubuntu/srv/apps/Shobu
             git pull origin main
             docker compose up --build -d
             docker image prune -f 
