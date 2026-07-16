@@ -13,7 +13,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       ISAIAH_PLAYER_ID: ${ISAIAH_PLAYER_ID}
       JULIA_PLAYER_ID: ${JULIA_PLAYER_ID}
-
+    depends_on:
+      - postgres
 
   frontend:
     build: ./frontend
@@ -23,14 +24,17 @@ services:
       - "3000:80"
     depends_on:
       - backend
+
   postgres:
     image: postgres:17
     container_name: shobu-postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: shobu
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - shobu-postgres-data:/var/lib/postgresql/
+      - shobu-postgres-data:/var/lib/postgresql/data
+
 volumes:
   shobu-postgres-data:
