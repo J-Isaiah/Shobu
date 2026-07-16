@@ -10,9 +10,7 @@ on:
 jobs:
   backend:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
+
     services:
       postgres:
         image: postgres:17
@@ -28,10 +26,14 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
-      env:
-        SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/shobu
-        SPRING_DATASOURCE_USERNAME: shobu
-        SPRING_DATASOURCE_PASSWORD: test-password
+    env:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/shobu
+      SPRING_DATASOURCE_USERNAME: shobu
+      SPRING_DATASOURCE_PASSWORD: test-password
+
+    defaults:
+      run:
+        working-directory: backend
 
 
     steps:
@@ -64,9 +66,6 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install frontend deps
-        run: npm ci
-
-      - name: install front end deps
         run: npm ci
 
       #      - name: Lint frontend
