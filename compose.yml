@@ -21,8 +21,6 @@ services:
       POSTGRES_DB: shobu
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
     volumes:
       - shobu-postgres-data:/var/lib/postgresql/
 volumes:
