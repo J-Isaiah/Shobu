@@ -13,11 +13,31 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: shobu
+          POSTGRES_USER: shobu
+          POSTGRES_PASSWORD: test-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U shobu -d shobu"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+      env:
+        SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/shobu
+        SPRING_DATASOURCE_USERNAME: shobu
+        SPRING_DATASOURCE_PASSWORD: test-password
+
 
     steps:
       - uses: actions/checkout@v5
 
-      - name:  Set up Java
+      - name: Set up Java
         uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -25,7 +45,7 @@ jobs:
           cache: maven
 
       - name: Test backend
-        run:  ./mvnw test
+        run: ./mvnw test
 
   frontend:
     runs-on: ubuntu-latest
@@ -49,15 +69,15 @@ jobs:
       - name: install front end deps
         run: npm ci
 
-#      - name: Lint frontend
-#        run: npm run lint
+      #      - name: Lint frontend
+      #        run: npm run lint
 
       - name: Build frontend
         run: npm run build
 
   docker:
     runs-on: ubuntu-latest
-    needs: [backend, frontend]
+    needs: [ backend, frontend ]
 
     steps:
       - uses: actions/checkout@v5
@@ -67,7 +87,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [backend, frontend, docker]
+    needs: [ backend, frontend, docker ]
     if: github.ref ==  'refs/heads/main'
 
 
